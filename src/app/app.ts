@@ -1,8 +1,17 @@
-import express, { Request, Response } from "express";
-const app = express();
+import express, { Request, Response } from 'express'
+import cors from 'cors'
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("Welcome To The Server");
-});
+const app = express()
 
-export default app;
+// parser
+app.use(express.json())
+app.use(cors())
+
+// routes
+// app.use("/api/vi/student", )
+
+app.get('/', (req: Request, res: Response) => {
+  res.send('Welcome To The Server')
+})
+
+export default app
