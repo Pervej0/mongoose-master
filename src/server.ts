@@ -1,6 +1,6 @@
-import config from './config'
-import app from './app'
 import mongoose from 'mongoose'
+import app from './app'
+import config from './app/config'
 
 const main = async () => {
   try {
@@ -12,4 +12,5 @@ const main = async () => {
     console.log(error)
   }
 }
+
 main()
