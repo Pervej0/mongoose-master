@@ -10,7 +10,7 @@ export type Guardian = {
 export type studentName = {
   firstName: string
   lastName: string
-  middleName: string
+  middleName?: string | undefined
 }
 
 export type Student = {
@@ -27,7 +27,7 @@ export type Student = {
   permanentAdd: string
   guardian: Guardian
   localGuardian: LocalGuardian
-  isActive: 'active' | 'inActive'
+  isActive: 'active' | 'block'
 }
 
 export type LocalGuardian = {
