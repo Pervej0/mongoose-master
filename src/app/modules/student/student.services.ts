@@ -17,8 +17,16 @@ const getSingleStudentDB = async (studentId: string) => {
   return result
 }
 
+const updateIsDeletedFieldDB = async (studentId: string) => {
+  const filter = { id: studentId }
+  console.log(filter, 'ssssssssser')
+  const result = await StudentModel.updateOne(filter, { isDeleted: true })
+  return result
+}
+
 export const studentServices = {
   createAStudentDB,
   getAllStudentDB,
   getSingleStudentDB,
+  updateIsDeletedFieldDB,
 }

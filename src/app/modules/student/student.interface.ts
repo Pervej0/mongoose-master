@@ -15,6 +15,7 @@ export type studentName = {
 
 export type Student = {
   id: string
+  password: string
   name: studentName
   studentProfile?: string
   gender: 'male' | 'female' | 'others'
@@ -28,6 +29,7 @@ export type Student = {
   guardian: Guardian
   localGuardian: LocalGuardian
   isActive: 'active' | 'block'
+  isDeleted: boolean
 }
 
 export type LocalGuardian = {

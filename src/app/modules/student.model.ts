@@ -6,6 +6,8 @@ import {
   studentName,
 } from './student/student.interface'
 import validator from 'validator'
+import config from '../config'
+import bcrypt from 'bcrypt'
 
 const studentNameSchema = new Schema<studentName>({
   firstName: {
@@ -72,6 +74,11 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 
 const studentSchema = new Schema<Student>({
   id: { type: String, required: true, unique: true },
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    max: [20, 'Password can not be more than 20 characters'],
+  },
   name: {
     type: studentNameSchema,
     required: [true, 'Name is required to submit'],
@@ -123,6 +130,23 @@ const studentSchema = new Schema<Student>({
     },
     default: 'active',
   },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+// mongoose save hook/middleware
+studentSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this
+  user.password = await bcrypt.hash(user.password, Number(config.salt_round))
+  next()
+})
+
+studentSchema.post('save', function (doc, next) {
+  doc.password = ''
+  next()
 })
 
 // student model

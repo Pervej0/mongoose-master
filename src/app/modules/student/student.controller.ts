@@ -17,9 +17,8 @@ const createAStudent = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: 'Student has been created Successfully',
-      data,
+      data: result,
     })
-    return result
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -63,8 +62,29 @@ const getSingleStudent = async (req: Request, res: Response) => {
     })
   }
 }
+
+const updateIsDeletedField = async (req: Request, res: Response) => {
+  try {
+    const stoudentId = req.params.studentId
+    console.log(stoudentId, 'cccccccccc')
+    const result = await studentServices.updateIsDeletedFieldDB(stoudentId)
+    res.status(200).json({
+      success: true,
+      message: 'Student Field successfully deleted',
+      data: result,
+    })
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Something went wrong',
+      error,
+    })
+  }
+}
+
 export const studentControllers = {
   createAStudent,
   getAllStudent,
   getSingleStudent,
+  updateIsDeletedField,
 }
