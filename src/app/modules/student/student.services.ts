@@ -8,18 +8,18 @@ const createAStudentDB = async (student: Student) => {
 
 const getAllStudentDB = async () => {
   const result = await StudentModel.find({})
+  // const result = await StudentModel.aggregate([])
   return result
 }
-
 const getSingleStudentDB = async (studentId: string) => {
   const filter = { id: studentId }
-  const result = await StudentModel.findOne(filter).exec()
+  // const result = await StudentModel.findOne(filter).exec()
+  const result = await StudentModel.aggregate([{ $match: filter }])
   return result
 }
 
 const updateIsDeletedFieldDB = async (studentId: string) => {
-  const filter = { id: studentId }
-  console.log(filter, 'ssssssssser')
+  const filter = { _id: studentId }
   const result = await StudentModel.updateOne(filter, { isDeleted: true })
   return result
 }

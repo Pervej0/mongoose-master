@@ -1,19 +1,20 @@
 import { Request, Response } from 'express'
 import { studentServices } from './student.services'
-import studentZodValidationSchema from './student.zod.validation'
+// import studentZodValidationSchema from './student.zod.validation'
 // import studentValidationSchema from './student.validation'
 
 const createAStudent = async (req: Request, res: Response) => {
   try {
     const data = req.body.student
-    const zodparseData = studentZodValidationSchema.parse(data)
+    // const zodparseData = studentZodValidationSchema.parse(data)
     // console.log(zodparseData)
 
     // data validation by using joi
     // const { error, value } = studentValidationSchema.validate(data)
     // console.log({ error: error?.details }, value)
 
-    const result = await studentServices.createAStudentDB(zodparseData)
+    const result = await studentServices.createAStudentDB(data)
+
     res.status(200).json({
       success: true,
       message: 'Student has been created Successfully',
@@ -66,7 +67,6 @@ const getSingleStudent = async (req: Request, res: Response) => {
 const updateIsDeletedField = async (req: Request, res: Response) => {
   try {
     const stoudentId = req.params.studentId
-    console.log(stoudentId, 'cccccccccc')
     const result = await studentServices.updateIsDeletedFieldDB(stoudentId)
     res.status(200).json({
       success: true,

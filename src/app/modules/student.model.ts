@@ -79,6 +79,12 @@ const studentSchema = new Schema<Student>({
     required: [true, 'Password is required'],
     max: [20, 'Password can not be more than 20 characters'],
   },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'UserId is required'],
+    unique: true,
+    ref: 'User',
+  },
   name: {
     type: studentNameSchema,
     required: [true, 'Name is required to submit'],
@@ -123,13 +129,6 @@ const studentSchema = new Schema<Student>({
     type: localGuardianSchema,
     required: [true, 'Local Guardian details is required'],
   },
-  isActive: {
-    type: String,
-    enum: {
-      values: ['active', 'block'],
-    },
-    default: 'active',
-  },
   isDeleted: {
     type: Boolean,
     default: false,
@@ -147,6 +146,22 @@ studentSchema.pre('save', async function (next) {
 studentSchema.post('save', function (doc, next) {
   doc.password = ''
   next()
+})
+
+// mongoose query hook/middleware
+studentSchema.pre('find', async function (next) {
+  this.find({ isDeleted: { $ne: true } })
+  next()
+})
+
+studentSchema.pre('findOne', async function (next) {
+  this.find({ isDeleted: { $ne: true } })
+  next()
+})
+
+// aggregate hooks
+studentSchema.pre('aggregate', function () {
+  this.pipeline().unshift({ $match: {} })
 })
 
 // student model
