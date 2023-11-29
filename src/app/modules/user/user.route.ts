@@ -1,9 +1,13 @@
 import express, { Router } from 'express'
 import { createAUser } from './user.controller'
+import studentZodValidationSchema from '../student/student.zod.validation'
+import { studentValidation } from '../../config/middleware/userValidataion'
 const router = express.Router()
 
-console.log('user route')
-
-router.post('/create-student', createAUser)
+router.post(
+  '/create-student',
+  studentValidation(studentZodValidationSchema),
+  createAUser,
+)
 
 export const userRoutes: Router = router

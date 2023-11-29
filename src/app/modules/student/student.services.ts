@@ -1,4 +1,4 @@
-import { StudentModel } from '../student.model'
+import { StudentModel } from './student.model'
 import { Student } from './student.interface'
 
 const createAStudentDB = async (student: Student) => {

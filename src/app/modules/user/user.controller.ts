@@ -1,21 +1,15 @@
-import { NextFunction, Request, Response } from 'express'
+import { RequestHandler } from 'express'
 import { createAUserDB } from './user.service'
+import SendResponse from '../../utils/sendResponse'
+import useAsyncCatch from '../../utils/useAsyncCatch'
 
-export const createAUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  console.log('user controller')
-  try {
-    const { password, student: studentData } = req.body
-    const query = await createAUserDB(password, studentData)
-    res.status(200).json({
-      success: true,
-      message: 'Successfully user has been created!',
-      data: query,
-    })
-  } catch (error) {
-    next(error)
-  }
-}
+export const createAUser: RequestHandler = useAsyncCatch(async (req, res) => {
+  const { password, student: studentData } = req.body
+  const result = await createAUserDB(password, studentData)
+
+  SendResponse(res, {
+    statusCode: 200,
+    message: 'Successfully user has been created!',
+    data: result,
+  })
+})

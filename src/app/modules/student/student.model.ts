@@ -4,9 +4,9 @@ import {
   LocalGuardian,
   Student,
   studentName,
-} from './student/student.interface'
+} from './student.interface'
 import validator from 'validator'
-import config from '../config'
+import config from '../../config'
 import bcrypt from 'bcrypt'
 
 const studentNameSchema = new Schema<studentName>({
