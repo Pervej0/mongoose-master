@@ -51,7 +51,7 @@ const studentZodValidationSchema = z.object({
       permanentAdd: z.string(),
       guardian: guardianSchema,
       localGuardian: localGuardianSchema,
-      isDeleted: z.boolean(),
+      isDeleted: z.boolean().optional(),
     }),
   }),
 })
