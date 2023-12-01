@@ -6,32 +6,37 @@ import {
   Month,
 } from './acadmicSemester.constent'
 
-const academicSemesterSchema = new Schema<TAcademicSemester>({
-  name: {
-    type: String,
-    enum: [...AcademicSemesterName],
-    require: [true, 'Semester Name is required!'],
+const academicSemesterSchema = new Schema<TAcademicSemester>(
+  {
+    name: {
+      type: String,
+      enum: [...AcademicSemesterName],
+      require: [true, 'Semester Name is required!'],
+    },
+    year: {
+      type: Number,
+      required: [true, 'Year is required!'],
+    },
+    code: {
+      type: String,
+      enum: [...AcademicSemesterCode],
+      require: [true, 'Semester Code is required!'],
+    },
+    startMonth: {
+      type: String,
+      enum: [...Month],
+      require: [true, 'Start month is required!'],
+    },
+    endMonth: {
+      type: String,
+      enum: [...Month],
+      require: [true, 'End month is required!'],
+    },
   },
-  year: {
-    type: Number,
-    required: [true, 'Year is required!'],
+  {
+    timestamps: true,
   },
-  code: {
-    type: String,
-    enum: [...AcademicSemesterCode],
-    require: [true, 'Semester Code is required!'],
-  },
-  startMonth: {
-    type: String,
-    enum: [...Month],
-    require: [true, 'Start month is required!'],
-  },
-  endMonth: {
-    type: String,
-    enum: [...Month],
-    require: [true, 'End month is required!'],
-  },
-})
+)
 
 academicSemesterSchema.pre('save', async function (next) {
   const filter1 = { name: this.name }

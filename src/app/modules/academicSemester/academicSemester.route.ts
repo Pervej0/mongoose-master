@@ -16,10 +16,7 @@ router.post(
 )
 
 router.get('/create-academic-semester', GetAllAcademicSemester)
-router.get('/create-academic-semester/:semesterId', GetSingleAcademicSemester)
-router.patch(
-  '/create-academic-semester/:semesterId',
-  UpdateSingleAcademicSemester,
-)
+router.get('/:semesterId', GetSingleAcademicSemester)
+router.patch('/:semesterId', UpdateSingleAcademicSemester)
 
 export const academicSemesterRouter: Router = router

@@ -58,7 +58,7 @@ const localGuardianSchema = Joi.object({
   }),
 })
 
-const studentValidationSchema = Joi.object({
+const studentZodValidationSchema = Joi.object({
   id: Joi.string().required(),
   name: studentNameSchema.required().messages({
     'any.required': 'Name is required to submit',
@@ -103,4 +103,4 @@ const studentValidationSchema = Joi.object({
   isActive: Joi.string().valid('active', 'block').default('active'),
 })
 
-export default studentValidationSchema
+export default studentZodValidationSchema

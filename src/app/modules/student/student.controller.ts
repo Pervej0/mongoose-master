@@ -3,7 +3,7 @@ import { studentServices } from './student.services'
 import SendResponse from '../../utils/sendResponse'
 import useAsyncCatch from '../../utils/useAsyncCatch'
 // import studentZodValidationSchema from './student.zod.validation'
-// import studentValidationSchema from './student.validation'
+// import studentZodValidationSchema from './student.validation'
 
 const createAStudent: RequestHandler = useAsyncCatch(async (req, res) => {
   const data = req.body.student
