@@ -15,7 +15,7 @@ export type studentName = {
   middleName?: string | undefined
 }
 
-export type Student = {
+export type TStudent = {
   id: string
   password: string
   user?: Types.ObjectId

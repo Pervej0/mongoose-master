@@ -44,9 +44,21 @@ const updateIsDeletedField: RequestHandler = useAsyncCatch(async (req, res) => {
   })
 })
 
+const updateSingleStudent: RequestHandler = useAsyncCatch(async (req, res) => {
+  const id = req.params.studentId
+  const updatedData = req.body.student
+  const result = await studentServices.updateSingleStudentDB(id, updatedData)
+  SendResponse(res, {
+    statusCode: 200,
+    message: 'Student data updated successfully!',
+    data: result,
+  })
+})
+
 export const studentControllers = {
   createAStudent,
   getAllStudent,
   getSingleStudent,
   updateIsDeletedField,
+  updateSingleStudent,
 }

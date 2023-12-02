@@ -8,7 +8,7 @@ const findLastStudent = async () => {
   ).sort({
     createdAt: -1,
   })
-  return lastStudent?.id.substring(6) || undefined
+  return lastStudent?.id ? lastStudent.id.substring(6) : undefined
 }
 
 export const studentUserGeneratedId = async (

@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose'
 import {
   Guardian,
   LocalGuardian,
-  Student,
+  TStudent,
   studentName,
 } from './student.interface'
 import validator from 'validator'
@@ -72,7 +72,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 })
 
-const studentSchema = new Schema<Student>({
+const studentSchema = new Schema<TStudent>({
   id: { type: String, unique: true },
   password: {
     type: String,
@@ -146,8 +146,19 @@ studentSchema.pre('save', async function (next) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const user = this
   user.password = await bcrypt.hash(user.password, Number(config.salt_round))
+
   next()
 })
+
+// studentNameSchema.pre('findOneAndUpdate', async function (next) {
+//   const query = this.getQuery()
+//   console.log(query, 'cccccccccc')
+//   const isStudentExists = await StudentModel.findOne({ _id: query })
+//   if (!isStudentExists) {
+//     throw new CustomError(httpStatus.BAD_REQUEST, 'User does not exist!')
+//   }
+//   next()
+// })
 
 studentSchema.post('save', function (doc, next) {
   doc.password = ''
@@ -171,4 +182,4 @@ studentSchema.pre('aggregate', function () {
 })
 
 // student model
-export const StudentModel = model<Student>('Student', studentSchema)
+export const StudentModel = model<TStudent>('Student', studentSchema)

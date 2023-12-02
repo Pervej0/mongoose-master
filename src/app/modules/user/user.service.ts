@@ -1,13 +1,16 @@
 import config from '../../config'
 import { StudentModel } from '../student/student.model'
-import { Student } from '../student/student.interface'
+import { TStudent } from '../student/student.interface'
 import UserModel from './user.modal'
 import { TUser } from './user.interface'
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model'
 import { studentUserGeneratedId } from './user.util'
 
 // let userId: number = 202301212
-export const createAUserDB = async (password: string, studentData: Student) => {
+export const createAUserDB = async (
+  password: string,
+  studentData: TStudent,
+) => {
   const userData: Partial<TUser> = {}
   // setting default password
   userData.password = password || config.defaultPassword

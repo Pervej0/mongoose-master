@@ -32,7 +32,7 @@ const localGuardianSchema = z.object({
   address: z.string().min(1),
 })
 
-const studentZodValidationSchema = z.object({
+export const studentZodValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20),
     student: z.object({
@@ -58,4 +58,62 @@ const studentZodValidationSchema = z.object({
   }),
 })
 
-export default studentZodValidationSchema
+// update student data
+
+const UpdateStudentNameSchema = z.object({
+  firstName: z
+    .string()
+    .min(1)
+    .max(20)
+    .regex(/^[a-zA-Z]+$/, { message: 'Please use a proper name' })
+    .optional(),
+  lastName: z
+    .string()
+    .min(1)
+    .max(20)
+    .regex(/^[a-zA-Z]+$/, {
+      message: 'Last name cannot be more than 20 characters',
+    })
+    .optional(),
+  middleName: z.string().optional(),
+})
+
+const UpdateGuardianSchema = z.object({
+  fatherName: z.string().min(1).optional(),
+  fatherOccupation: z.string().min(1).optional(),
+  fatherContact: z.string().min(1).optional(),
+  motherName: z.string().min(1).optional(),
+  motherOccupation: z.string().min(1).optional(),
+  motherContact: z.string().min(1).optional(),
+})
+
+const UpdateLocalGuardianSchema = z.object({
+  name: z.string().min(1).optional(),
+  occupation: z.string().min(1).optional(),
+  contactNo: z.string().min(1).optional(),
+  address: z.string().min(1).optional(),
+})
+
+export const UpdateStudentZodValidationSchema = z.object({
+  body: z.object({
+    password: z.string().max(20).optional(),
+    student: z.object({
+      name: UpdateStudentNameSchema.optional(),
+      studentProfile: z.string().optional(),
+      gender: z.enum(['male', 'female', 'others']).optional(),
+      dob: z.string().optional(),
+      email: z.string().email().optional(),
+      contactNo: z.string().optional(),
+      emergencyContact: z.string().optional(),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+        .optional(),
+      presentAdd: z.string().optional(),
+      permanentAdd: z.string().optional(),
+      guardian: UpdateGuardianSchema.optional(),
+      admissionSemester: z.string().optional(),
+      localGuardian: UpdateLocalGuardianSchema.optional(),
+      isDeleted: z.boolean().optional(),
+    }),
+  }),
+})
