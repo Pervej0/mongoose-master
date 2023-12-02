@@ -15,7 +15,7 @@ const academicFacultySchema = new Schema<TAcademicFaculty>(
 )
 
 const AcademicFacultyModel = model<TAcademicFaculty>(
-  'academic-faculty',
+  'Academic-faculty',
   academicFacultySchema,
 )
 

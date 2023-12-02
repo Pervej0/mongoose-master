@@ -36,7 +36,6 @@ const studentZodValidationSchema = z.object({
   body: z.object({
     password: z.string().max(20),
     student: z.object({
-      password: z.string(),
       name: studentNameSchema,
       studentProfile: z.string().optional(),
       gender: z.enum(['male', 'female', 'others']),
@@ -50,6 +49,9 @@ const studentZodValidationSchema = z.object({
       presentAdd: z.string(),
       permanentAdd: z.string(),
       guardian: guardianSchema,
+      admissionSemester: z.string(),
+      // academicFaculty: z.string(),
+      // academicDepartment: z.string(),
       localGuardian: localGuardianSchema,
       isDeleted: z.boolean().optional(),
     }),

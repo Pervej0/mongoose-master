@@ -3,8 +3,10 @@ import { StudentModel } from '../student/student.model'
 import { Student } from '../student/student.interface'
 import UserModel from './user.modal'
 import { TUser } from './user.interface'
+import { AcademicSemesterModel } from '../academicSemester/academicSemester.model'
+import { studentUserGeneratedId } from './user.util'
 
-let userId: number = 202301212
+// let userId: number = 202301212
 export const createAUserDB = async (password: string, studentData: Student) => {
   const userData: Partial<TUser> = {}
   // setting default password
@@ -12,9 +14,15 @@ export const createAUserDB = async (password: string, studentData: Student) => {
 
   // set user role as student
   userData.role = 'student'
+  // user semsester info
+  const admissionSemester = await AcademicSemesterModel.findById(
+    studentData.admissionSemester,
+  )
   // user id
-  userId += 1
-  userData.id = userId.toString()
+  if (!admissionSemester) {
+    throw new Error('Admission semester data could not found!')
+  }
+  userData.id = await studentUserGeneratedId(admissionSemester)
   const newUser = await UserModel.create(userData)
 
   // create a student

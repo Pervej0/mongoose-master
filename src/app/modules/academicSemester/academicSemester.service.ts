@@ -19,9 +19,8 @@ export const GetAllAcademicSemesterDB = async () => {
 }
 
 export const GetSingleAcademicSemesterDB = async (id: string) => {
-  if (!id) throw new Error('Id received undefined or null!')
   const filter = { _id: id }
-  const query = await AcademicSemesterModel.findOne(filter)
+  const query = await AcademicSemesterModel.findById(filter)
   return query
 }
 
@@ -29,7 +28,6 @@ export const UpdateSingleAcademicSemesterDB = async (
   id: string,
   updateData: TAcademicSemester,
 ) => {
-  if (!id) throw new Error('Id received undefined or null!')
   const filter = { _id: id }
   const query = await AcademicSemesterModel.findOneAndUpdate(filter, updateData)
   return query

@@ -7,7 +7,7 @@ import { academicDepartmentRouter } from '../modules/academicDepartment/academic
 const app = express()
 
 const allRoutes = [
-  { path: '/api/v1/students', route: StudentRoutes },
+  { path: '/api/v1/users/students', route: StudentRoutes },
   { path: '/api/v1/users', route: userRoutes },
   { path: '/api/v1/academic-semesters', route: academicSemesterRouter },
   { path: '/api/v1/academic-faculties', route: academicFacultyRouter },

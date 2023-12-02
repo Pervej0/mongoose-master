@@ -32,7 +32,7 @@ export const GetAllAcademicSemester: RequestHandler = useAsyncCatch(
 )
 
 export const GetSingleAcademicSemester = useAsyncCatch(async (req, res) => {
-  const id = req.params.semeseterId
+  const id = req.params.semesterId
   const result = await GetSingleAcademicSemesterDB(id)
   SendResponse(res, {
     statusCode: 200,
