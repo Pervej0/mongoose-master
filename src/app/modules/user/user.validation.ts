@@ -13,8 +13,8 @@ const UserZodValidatationSchema = z.object({
     needsPasswordChange: z.boolean().optional().default(true),
     email: z.string().optional(),
     role: z.enum(['student', 'teacher', 'admin']),
-    staus: z.enum(['active', 'blocked']).default('active'),
-    isDeletd: z.boolean().optional().default(false),
+    status: z.enum(['active', 'blocked']).default('active'),
+    isDeleted: z.boolean().optional().default(false),
   }),
 })
 

@@ -73,7 +73,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 })
 
 const studentSchema = new Schema<Student>({
-  id: { type: String, required: true, unique: true },
+  id: { type: String, unique: true },
   password: {
     type: String,
     required: [true, 'Password is required'],
@@ -81,8 +81,6 @@ const studentSchema = new Schema<Student>({
   },
   user: {
     type: Schema.Types.ObjectId,
-    required: [true, 'UserId is required'],
-    unique: true,
     ref: 'User',
   },
   name: {
@@ -128,6 +126,14 @@ const studentSchema = new Schema<Student>({
   localGuardian: {
     type: localGuardianSchema,
     required: [true, 'Local Guardian details is required'],
+  },
+  admissionSemester: {
+    type: Schema.Types.ObjectId,
+    ref: 'Academic-semester',
+  },
+  academicDepartment: {
+    type: Schema.Types.ObjectId,
+    ref: 'Academic-department',
   },
   isDeleted: {
     type: Boolean,

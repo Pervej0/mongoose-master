@@ -18,7 +18,7 @@ export type studentName = {
 export type Student = {
   id: string
   password: string
-  user: Types.ObjectId
+  user?: Types.ObjectId
   name: studentName
   studentProfile?: string
   gender: 'male' | 'female' | 'others'
@@ -31,6 +31,8 @@ export type Student = {
   permanentAdd: string
   guardian: Guardian
   localGuardian: LocalGuardian
+  admissionSemester: Types.ObjectId
+  academicDepartment: Types.ObjectId
   isDeleted: boolean
 }
 

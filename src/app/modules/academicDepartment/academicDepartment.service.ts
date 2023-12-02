@@ -9,7 +9,9 @@ export const CreateAcademicDepartmentDB = async (
 }
 
 export const GetAllAcademicDepartmentDB = async () => {
-  const query = await AcademicDepartmentModel.find({})
+  const query = await AcademicDepartmentModel.find({}).populate(
+    'academicFaculty',
+  )
   return query
 }
 
