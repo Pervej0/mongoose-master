@@ -5,14 +5,14 @@ import {
   GetSingleAcademicDepartment,
   UpdateSingeAcademicDepartment,
 } from './academicDepartment.controller'
-import { createDataValidation } from '../../config/middleware/createDataValidation'
-import academicDepartmentZodValidation from './academicDepartmentValidation'
+// import { createDataValidation } from '../../config/middleware/createDataValidation'
+// import academicDepartmentZodValidation from './academicDepartmentValidation'
 
 const router = express.Router()
 
 router.post(
   '/create-academic-department',
-  createDataValidation(academicDepartmentZodValidation),
+  // createDataValidation(academicDepartmentZodValidation),
   CreateAcademicDepartment,
 )
 router.get('/', GetAllAcademicDepartment)
