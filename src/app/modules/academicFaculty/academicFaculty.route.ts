@@ -14,7 +14,7 @@ router.post(
   createDataValidation(academicFacultyZodValidationSchema),
   CreateAcademicFaculty,
 )
-router.get('/create-academic-faculty', GetAllAcademicFaculty)
+router.get('/', GetAllAcademicFaculty)
 router.get('/:facultyId', GetSingleAcademicFaculty)
 router.patch('/:facultyId', UpdateSingleAcademicFaculty)
 
