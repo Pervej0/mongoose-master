@@ -15,7 +15,7 @@ router.post(
   CreateAcademicSemester,
 )
 
-router.get('/create-academic-semester', GetAllAcademicSemester)
+router.get('/', GetAllAcademicSemester)
 router.get('/:semesterId', GetSingleAcademicSemester)
 router.patch('/:semesterId', UpdateSingleAcademicSemester)
 
