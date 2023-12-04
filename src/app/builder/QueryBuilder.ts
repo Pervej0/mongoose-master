@@ -10,10 +10,10 @@ class QueryBuilder<T> {
   }
 
   search(searchableFields: string[]) {
-    const searchTearm = this?.query?.searchText || ''
-    this.modelQuery = this?.modelQuery?.find({
+    const searchTearm = this.query.searchText || ''
+    this.modelQuery = this.modelQuery.find({
       $or: searchableFields?.map((field) => ({
-        [field]: { $regex: searchTearm, options: '1' },
+        [field]: { $regex: searchTearm, $options: 'i' },
       })),
     } as FilterQuery<T>)
     return this

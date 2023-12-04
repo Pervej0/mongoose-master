@@ -69,6 +69,7 @@ const getAllStudentDB = async (query: Record<string, unknown>) => {
     .paginate()
     .fields()
   const result = await studentQuery.modelQuery
+  return result
 }
 const getSingleStudentDB = async (studentId: string) => {
   const filter = { id: studentId }
