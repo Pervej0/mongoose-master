@@ -6,6 +6,8 @@ import mongoose from 'mongoose'
 import CustomError from '../../error/customError'
 import UserModel from '../user/user.modal'
 import httpStatus from 'http-status'
+import QueryBuilder from '../../builder/QueryBuilder'
+import { searchableFields } from './student.constant'
 
 const createAStudentDB = async (student: TStudent) => {
   const result = await StudentModel.create(student)
@@ -13,52 +15,60 @@ const createAStudentDB = async (student: TStudent) => {
 }
 
 const getAllStudentDB = async (query: Record<string, unknown>) => {
-  const searchTerm = query.searchText || ''
-  const queryObj = { ...query }
+  // const searchTerm = query.searchText || ''
+  // const queryObj = { ...query }
 
-  const searchQuery = StudentModel.find({
-    $or: ['name.firstName', 'email', 'presentAdd'].map((field) => ({
-      [field]: { $regex: searchTerm, $options: 'i' },
-    })),
-  })
+  // const searchQuery = StudentModel.find({
+  //   $or: ['name.firstName', 'email', 'presentAdd'].map((field) => ({
+  //     [field]: { $regex: searchTerm, $options: 'i' },
+  //   })),
+  // })
 
-  // filter
-  const excludeField = ['searchText', 'sort', 'limit', 'page', 'fields']
-  // removing search query so that filter query become specefic
-  excludeField.forEach((el) => delete queryObj[el])
-  const filterSearch = searchQuery
-    .find(queryObj)
-    .populate('admissionSemester')
-    .populate({
-      path: 'academicDepartment',
-      populate: {
-        path: 'academicFaculty',
-      },
-    })
+  // // filter
+  // const excludeField = ['searchText', 'sort', 'limit', 'page', 'fields']
+  // // removing search query so that filter query become specefic
+  // excludeField.forEach((el) => delete queryObj[el])
+  // const filterSearch = searchQuery
+  //   .find(queryObj)
+  //   .populate('admissionSemester')
+  //   .populate({
+  //     path: 'academicDepartment',
+  //     populate: {
+  //       path: 'academicFaculty',
+  //     },
+  //   })
 
-  const sort = ('-createdAt' || query.sort) as string
+  // const sort = ('-createdAt' || query.sort) as string
 
-  const sortQuery = filterSearch.sort(sort)
-  const limit = (Number(query.limit) || 1) as number
-  let page = 1
-  let skip = 0
-  const limitQuery = sortQuery.limit(limit)
-  if (query.page) {
-    page = Number(query.page) as number
-    skip = (page - 1) * limit
-  }
+  // const sortQuery = filterSearch.sort(sort)
+  // const limit = (Number(query.limit) || 1) as number
+  // let page = 1
+  // let skip = 0
+  // const limitQuery = sortQuery.limit(limit)
+  // if (query.page) {
+  //   page = Number(query.page) as number
+  //   skip = (page - 1) * limit
+  // }
 
-  // const pagination = limitQuery.skip(skip)
+  // // const pagination = limitQuery.skip(skip)
 
-  // field filtering
-  let fields = ''
-  if (query.fields) {
-    fields = (query.fields as string).split(',').join(' ')
-  }
+  // // field filtering
+  // let fields = ''
+  // if (query.fields) {
+  //   fields = (query.fields as string).split(',').join(' ')
+  // }
 
-  const fieldQuery = await limitQuery.select(fields)
+  // const fieldQuery = await limitQuery.select(fields)
 
-  return fieldQuery
+  // return fieldQuery
+
+  const studentQuery = new QueryBuilder(StudentModel.find(), query)
+    .search(searchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
+  const result = await studentQuery.modelQuery
 }
 const getSingleStudentDB = async (studentId: string) => {
   const filter = { id: studentId }
