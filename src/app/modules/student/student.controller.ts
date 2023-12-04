@@ -16,7 +16,8 @@ const createAStudent: RequestHandler = useAsyncCatch(async (req, res) => {
 })
 
 const getAllStudent: RequestHandler = useAsyncCatch(async (req, res) => {
-  const result = await studentServices.getAllStudentDB()
+  const queryData = req.query
+  const result = await studentServices.getAllStudentDB(queryData)
   SendResponse(res, {
     statusCode: 200,
     message: 'All students data retrieved successfully!',

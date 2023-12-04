@@ -7,7 +7,7 @@ const findLastStudent = async () => {
     { id: 1, _id: 0 },
   )
     .sort({
-      createdAt: -1,
+      createdAt: -1, // sort document descending order
     })
     .lean()
   return lastStudent?.id ? lastStudent.id.substring(6) : undefined

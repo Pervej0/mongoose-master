@@ -14,7 +14,7 @@ app.use(cors())
 app.use(routeHandler)
 
 // testing route
-app.get('/', (req: Request, res: Response) => {
+app.get('/', async (req: Request, res: Response) => {
   res.send('Welcome To The Server')
 })
 

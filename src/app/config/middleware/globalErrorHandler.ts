@@ -7,9 +7,10 @@ import config from '..'
 import handleMongooseError from '../../error/handleMongooseError'
 import handleCastError from '../../error/handleCastError'
 import handleDuplicateError from '../../error/handleDuplicateError'
+import CustomError from '../../error/customError'
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  let statusCode = err.statusCode || 500
+  let statusCode = 500
   let message = 'Something Went Wrong!'
 
   let errorSources: TErrorSources = [
@@ -39,6 +40,13 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     statusCode = customSimplifiedError.statusCode
     message = customSimplifiedError.message
     errorSources = customSimplifiedError.errorSources
+  } else if (err instanceof CustomError) {
+    statusCode = err.statusCode
+    message = err.message
+    errorSources = [{ path: '', message: err?.message }]
+  } else if (err instanceof Error) {
+    message = err.message
+    errorSources = [{ path: '', message: err?.message }]
   }
 
   return res.status(statusCode).json({
@@ -46,7 +54,6 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message,
     errorSources,
     stack: config.NODE_ENV ? err?.stack : null,
-    myError: err,
   })
 }
 
