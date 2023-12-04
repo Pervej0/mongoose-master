@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable no-undef */
 import { StudentModel } from './student.model'
 import { TStudent } from './student.interface'
@@ -11,8 +12,22 @@ const createAStudentDB = async (student: TStudent) => {
   return result
 }
 
-const getAllStudentDB = async () => {
-  const result = await StudentModel.find({})
+const getAllStudentDB = async (query: Record<string, unknown>) => {
+  const searchTerm = query.searchText || ''
+  const queryObj = { ...query }
+
+  const searchQuery = StudentModel.find({
+    $or: ['name.firstName', 'email', 'presentAdd'].map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  })
+
+  // filter
+  const excludeField = ['searchText', 'sort', 'limit', 'page', 'fields']
+  // removing search query so that filter query become specefic
+  excludeField.forEach((el) => delete queryObj[el])
+  const filterSearch = searchQuery
+    .find(queryObj)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -20,8 +35,30 @@ const getAllStudentDB = async () => {
         path: 'academicFaculty',
       },
     })
-  // const result = await StudentModel.aggregate([])
-  return result
+
+  const sort = ('-createdAt' || query.sort) as string
+
+  const sortQuery = filterSearch.sort(sort)
+  const limit = (Number(query.limit) || 1) as number
+  let page = 1
+  let skip = 0
+  const limitQuery = sortQuery.limit(limit)
+  if (query.page) {
+    page = Number(query.page) as number
+    skip = (page - 1) * limit
+  }
+
+  // const pagination = limitQuery.skip(skip)
+
+  // field filtering
+  let fields = ''
+  if (query.fields) {
+    fields = (query.fields as string).split(',').join(' ')
+  }
+
+  const fieldQuery = await limitQuery.select(fields)
+
+  return fieldQuery
 }
 const getSingleStudentDB = async (studentId: string) => {
   const filter = { id: studentId }
