@@ -8,9 +8,8 @@ class QueryBuilder<T> {
     this.modelQuery = modelQuery
     this.query = query
   }
-
   search(searchableFields: string[]) {
-    const searchTearm = this.query.searchText || ''
+    const searchTearm = this.query.searchTerm || ''
     this.modelQuery = this.modelQuery.find({
       $or: searchableFields?.map((field) => ({
         [field]: { $regex: searchTearm, $options: 'i' },
@@ -20,8 +19,8 @@ class QueryBuilder<T> {
   }
   filter() {
     const queryObj: Record<string, unknown> = { ...this.query }
-    const excludeField = ['searchTerm']
-    excludeField.forEach((el) => delete queryObj[el])
+    const excludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields']
+    excludeFields.forEach((el) => delete queryObj[el])
     this.modelQuery = this.modelQuery.find(queryObj)
     return this
   }
