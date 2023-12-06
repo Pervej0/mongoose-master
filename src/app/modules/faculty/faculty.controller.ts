@@ -9,7 +9,8 @@ import {
 import SendResponse from '../../utils/sendResponse'
 
 export const GetAllFaculty: RequestHandler = useAsyncCatch(async (req, res) => {
-  const result = await GetAllFacultyDB()
+  const query = req.query
+  const result = await GetAllFacultyDB(query)
   SendResponse(res, {
     statusCode: 200,
     message: 'Faculty data retrieved successfully!',

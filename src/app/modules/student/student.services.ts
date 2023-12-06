@@ -62,10 +62,10 @@ const getAllStudentDB = async (query: Record<string, unknown>) => {
 
   // return fieldQuery
 
-  if (!Object.keys(query).length) {
-    const result = await StudentModel.find({})
-    return result
-  }
+  // if (!Object.keys(query).length) {
+  //   const result = await StudentModel.find({})
+  //   return result
+  // }
 
   const studentQuery = new QueryBuilder(
     StudentModel.find()
@@ -134,7 +134,7 @@ const updateIsDeletedFieldDB = async (studentId: string) => {
   } catch (error) {
     await session.abortTransaction()
     await session.endSession()
-    throw new CustomError(httpStatus.BAD_REQUEST, 'Failed To create student!')
+    throw new CustomError(httpStatus.BAD_REQUEST, 'Failed To delete student!')
   }
 }
 

@@ -9,7 +9,7 @@ import { startSession } from 'mongoose'
 import CustomError from '../../error/customError'
 import httpStatus from 'http-status'
 import FacultyModel from '../faculty/faculty.model'
-import TFaculty from '../faculty/faculty.interface'
+import { TFaculty } from '../faculty/faculty.interface'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
