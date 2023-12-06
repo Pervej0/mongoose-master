@@ -2,7 +2,6 @@ import mongoose from 'mongoose'
 import { TErrorSources } from '../interface/error'
 
 const handleCastError = (error: mongoose.Error.CastError) => {
-  console.log(error)
   const errorSources: TErrorSources = [
     {
       path: error.path,

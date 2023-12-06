@@ -4,10 +4,12 @@ import { TStudent } from '../student/student.interface'
 import UserModel from './user.modal'
 import { TUser } from './user.interface'
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model'
-import { studentUserGeneratedId } from './user.util'
+import { generateFacultyId, studentUserGeneratedId } from './user.util'
 import { startSession } from 'mongoose'
 import CustomError from '../../error/customError'
 import httpStatus from 'http-status'
+import FacultyModel from '../faculty/faculty.model'
+import TFaculty from '../faculty/faculty.interface'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
@@ -53,5 +55,36 @@ export const createAUserDB = async (
     await session.abortTransaction()
     await session.endSession()
     throw new CustomError(httpStatus.BAD_REQUEST, 'Students Faild To Create!')
+  }
+}
+
+export const CreateFacultyDB = async (
+  password: string,
+  facultyData: TFaculty,
+) => {
+  const userData: Partial<TUser> = {}
+  userData.password = password || config.defaultPassword
+  userData.role = 'teacher'
+
+  const generateId = await generateFacultyId()
+  userData.id = generateId
+  const session = await startSession()
+  try {
+    session.startTransaction()
+    const newFaculty = await UserModel.create([userData], { session })
+    if (!newFaculty.length) {
+      throw new CustomError(httpStatus.BAD_REQUEST, 'User failed to create!')
+    }
+    facultyData.id = newFaculty[0].id
+    facultyData.user = newFaculty[0]._id
+    const result = await FacultyModel.create([facultyData], { session })
+    await session.commitTransaction()
+    await session.endSession()
+    return result
+  } catch (error: unknown) {
+    await session.abortTransaction()
+    await session.endSession()
+    throw new Error(error)
+    // throw new CustomError(httpStatus.BAD_REQUEST, 'Faculty failed to create!')
   }
 }

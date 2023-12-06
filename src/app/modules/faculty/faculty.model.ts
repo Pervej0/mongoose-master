@@ -6,13 +6,18 @@ const FacultySchema = new Schema(
       type: String,
       required: [true, 'Faculty name is requried!'],
     },
-    id: {
-      type: String,
-      unique: true,
+    id: { type: String, unique: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
     isDeleted: {
       type: Boolean,
       default: false,
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academic-department',
     },
   },
   {

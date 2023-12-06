@@ -1,4 +1,5 @@
 import { TAcademicSemester } from '../academicSemester/academicSemester.interface'
+import FacultyModel from '../faculty/faculty.model'
 import UserModel from './user.modal'
 
 const findLastStudent = async () => {
@@ -36,4 +37,21 @@ export const studentUserGeneratedId = async (
     .toString()
     .padStart(4, '0')
   return `${admissionSemester.year}${admissionSemester.code}${incrementId}`
+}
+
+// generating faculty id----------------
+
+const findLastFacultyId = async () => {
+  const lastFaculty = await FacultyModel.find({}).sort({ _id: -1 }).limit(1)
+
+  return lastFaculty[0]?.id ? lastFaculty[0].id.split('-')[1] : undefined
+}
+
+export const generateFacultyId = async () => {
+  const latestId = (await findLastFacultyId()) || '0000'
+  const currentId = Number(Number(latestId) + 1)
+    .toString()
+    .padStart(4, '0')
+
+  return `F-${currentId}`
 }
