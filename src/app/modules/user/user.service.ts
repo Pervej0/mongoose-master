@@ -81,10 +81,10 @@ export const CreateFacultyDB = async (
     await session.commitTransaction()
     await session.endSession()
     return result
-  } catch (error: unknown) {
+  } catch (error) {
     await session.abortTransaction()
     await session.endSession()
-    throw new Error(error)
-    // throw new CustomError(httpStatus.BAD_REQUEST, 'Faculty failed to create!')
+    // throw new Error(error)
+    throw new CustomError(httpStatus.BAD_REQUEST, 'Faculty failed to create!')
   }
 }
