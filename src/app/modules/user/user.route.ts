@@ -1,9 +1,8 @@
 import express, { Router } from 'express'
-import { createAUser } from './user.controller'
+import { CreateFaculty, createAUser } from './user.controller'
 import { studentZodValidationSchema } from '../student/student.zod.validation'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
-// import { facultyValidationSchema } from '../faculty/faculty.validation'
-import { CreateFaculty } from '../faculty/faculty.controller'
+import { facultyValidationSchema } from '../faculty/faculty.validation'
 const router = express.Router()
 
 router.post(
@@ -12,6 +11,10 @@ router.post(
   createAUser,
 )
 
-router.post('/create-faculty', CreateFaculty)
+router.post(
+  '/create-faculty',
+  createDataValidation(facultyValidationSchema),
+  CreateFaculty,
+)
 
 export const userRoutes: Router = router
