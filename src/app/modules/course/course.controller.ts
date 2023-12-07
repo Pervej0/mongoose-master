@@ -2,6 +2,7 @@ import { RequestHandler } from 'express'
 import useAsyncCatch from '../../utils/useAsyncCatch'
 import {
   CreateCourseDB,
+  DeleteSingleCourseDB,
   GetAllCourseDB,
   GetSingleCourseDB,
   UpdateSingleCourseDB,
@@ -44,7 +45,7 @@ export const GetSingleCourse: RequestHandler = useAsyncCatch(
 export const DeleteSingleCourse: RequestHandler = useAsyncCatch(
   async (req, res) => {
     const id = req.params.courseId
-    const result = await GetSingleCourseDB(id)
+    const result = await DeleteSingleCourseDB(id)
     SendResponse(res, {
       statusCode: httpStatus.OK,
       message: 'Course deleted successfully!',
@@ -55,8 +56,8 @@ export const DeleteSingleCourse: RequestHandler = useAsyncCatch(
 
 export const UpdateSingleCourse: RequestHandler = useAsyncCatch(
   async (req, res) => {
-    const updatedData = req.body
     const id = req.params.courseId
+    const updatedData = req.body
     const result = await UpdateSingleCourseDB(id, updatedData)
     SendResponse(res, {
       statusCode: httpStatus.OK,
