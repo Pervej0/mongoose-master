@@ -1,10 +1,12 @@
 import { RequestHandler } from 'express'
 import useAsyncCatch from '../../utils/useAsyncCatch'
 import {
+  AssignCourseFacultiesDB,
   CreateCourseDB,
   DeleteSingleCourseDB,
   GetAllCourseDB,
   GetSingleCourseDB,
+  RemoveCourseFacultiesDB,
   UpdateSingleCourseDB,
 } from './course.service'
 import SendResponse from '../../utils/sendResponse'
@@ -62,6 +64,34 @@ export const UpdateSingleCourse: RequestHandler = useAsyncCatch(
     SendResponse(res, {
       statusCode: httpStatus.OK,
       message: 'Course updated successfully!',
+      data: result,
+    })
+  },
+)
+
+// assign course faculties request handling
+
+export const AssignCourseFaculties: RequestHandler = useAsyncCatch(
+  async (req, res) => {
+    const id = req.params.courseId
+    const updatedData = req.body
+    const result = await AssignCourseFacultiesDB(id, updatedData)
+    SendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Course Faculties added successfully!',
+      data: result,
+    })
+  },
+)
+
+export const RemoveCourseFaculties: RequestHandler = useAsyncCatch(
+  async (req, res) => {
+    const id = req.params.courseId
+    const deletedData = req.body
+    const result = await RemoveCourseFacultiesDB(id, deletedData)
+    SendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Course Faculties added successfully!',
       data: result,
     })
   },

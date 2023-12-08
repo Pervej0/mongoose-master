@@ -12,7 +12,7 @@ const UserZodValidatationSchema = z.object({
       .max(20, { message: 'maximum limits extended!' }),
     needsPasswordChange: z.boolean().optional().default(true),
     email: z.string().optional(),
-    role: z.enum(['student', 'teacher', 'admin']),
+    role: z.enum(['student', 'faculty', 'admin']),
     status: z.enum(['active', 'blocked']).default('active'),
     isDeleted: z.boolean().optional().default(false),
   }),

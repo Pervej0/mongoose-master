@@ -44,6 +44,26 @@ const courseSchema = new Schema<TCourse>({
   },
 })
 
-const CourseModel = mongoose.model<TCourse>('Course', courseSchema)
+export const CourseModel = mongoose.model<TCourse>('Course', courseSchema)
 
-export default CourseModel
+// course faculties
+const courseFaculitesSchema = new Schema({
+  course: {
+    type: Schema.Types.ObjectId,
+    ref: 'Course',
+    required: true,
+    unique: true,
+  },
+  faculties: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Faculty',
+      required: true,
+    },
+  ],
+})
+
+export const courseFaculitesModel = mongoose.model(
+  'Course-faculties',
+  courseFaculitesSchema,
+)

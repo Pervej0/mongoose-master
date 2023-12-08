@@ -4,12 +4,18 @@ import { TStudent } from '../student/student.interface'
 import UserModel from './user.modal'
 import { TUser } from './user.interface'
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model'
-import { generateFacultyId, studentUserGeneratedId } from './user.util'
-import { startSession } from 'mongoose'
+import {
+  generateAdminUserId,
+  generateFacultyId,
+  studentUserGeneratedId,
+} from './user.util'
+import mongoose, { startSession } from 'mongoose'
 import CustomError from '../../error/customError'
 import httpStatus from 'http-status'
 import FacultyModel from '../faculty/faculty.model'
 import { TFaculty } from '../faculty/faculty.interface'
+import { TAdmin } from '../admin/admin.interface'
+import AdminModel from '../admin/admin.model'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
@@ -64,7 +70,7 @@ export const CreateFacultyDB = async (
 ) => {
   const userData: Partial<TUser> = {}
   userData.password = password || config.defaultPassword
-  userData.role = 'teacher'
+  userData.role = 'faculty'
 
   const generateId = await generateFacultyId()
   userData.id = generateId
@@ -86,5 +92,38 @@ export const CreateFacultyDB = async (
     await session.endSession()
     // throw new Error(error)
     throw new CustomError(httpStatus.BAD_REQUEST, 'Faculty failed to create!')
+  }
+}
+
+// admin user
+
+export const CreateAdminDB = async (password: string, payload: TAdmin) => {
+  const userData: Partial<TUser> = {}
+  userData.password = password || config.defaultPassword
+  console.log(userData, 'efff')
+
+  const generateId = await generateAdminUserId()
+  console.log(generateId, 'eeeeee')
+  userData.id = generateId
+  userData.role = 'admin'
+  const session = await mongoose.startSession()
+  try {
+    session.startTransaction()
+    const newAdminUser = await UserModel.create([userData], { session })
+    if (!newAdminUser) {
+      throw new CustomError(
+        httpStatus.BAD_REQUEST,
+        'Admin User failed to create!',
+      )
+    }
+    payload.user = newAdminUser[0]._id
+    payload.id = newAdminUser[0].id
+    const newAdmin = await AdminModel.create([payload], [session])
+    await session.commitTransaction()
+    await session.endSession()
+    return newAdmin
+  } catch (error) {
+    await session.abortTransaction()
+    await session.endSession()
   }
 }

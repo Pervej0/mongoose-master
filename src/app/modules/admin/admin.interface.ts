@@ -1,43 +1,40 @@
-import { Types } from 'mongoose'
+import { Model, Types } from 'mongoose'
 
-export type Guardian = {
-  fatherName: string
-  fatherOccupation: string
-  fatherContact: string
-  motherName: string
-  motherOccupation: string
-  motherContact: string
-}
+export type TGender = 'male' | 'female' | 'other'
+export type TBloodGroup =
+  | 'A+'
+  | 'A-'
+  | 'B+'
+  | 'B-'
+  | 'AB+'
+  | 'AB-'
+  | 'O+'
+  | 'O-'
 
-export type adminName = {
+export type TUserName = {
   firstName: string
+  middleName: string
   lastName: string
-  middleName?: string | undefined
 }
 
-export type TStudent = {
+export type TAdmin = {
   id: string
-  password: string
-  user?: Types.ObjectId
-  name: adminName
-  adminProfile?: string
-  gender: 'male' | 'female' | 'others'
-  dob: string
+  user: Types.ObjectId
+  designation: string
+  name: TUserName
+  gender: TGender
+  dateOfBirth?: Date
   email: string
   contactNo: string
-  emergencyContact: string
-  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
-  presentAdd: string
-  permanentAdd: string
-  guardian: Guardian
-  admissionSemester: Types.ObjectId
-  academicDepartment: Types.ObjectId
+  emergencyContactNo: string
+  bloodGroup?: TBloodGroup
+  presentAddress: string
+  permanentAddress: string
+  profileImg?: string
   isDeleted: boolean
 }
 
-export type LocalGuardian = {
-  name: string
-  occupation: string
-  contactNo: string
-  address: string
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+export interface TAdminModelCheck extends Model<TAdmin> {
+  isUserExists(id: string): Promise<TAdmin | null>
 }

@@ -34,6 +34,7 @@ export type TFaculty = {
   academicDepartment: Types.ObjectId
   isDeleted: boolean
 }
+
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 export interface TFacultyModelCheck extends Model<TFaculty> {
   isUserExits(id: string): Promise<TFaculty | null>

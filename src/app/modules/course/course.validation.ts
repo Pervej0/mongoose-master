@@ -17,3 +17,10 @@ export const CourseValidationSchema = z.object({
 })
 
 export const UpdateCourseValidationSchema = CourseValidationSchema.partial()
+
+export const courseFaculitesValidationSchema = z.object({
+  body: z.object({
+    course: z.string(),
+    faculties: z.array(z.string()),
+  }),
+})

@@ -6,6 +6,7 @@ import { academicFacultyRouter } from '../modules/academicFaculty/academicFacult
 import { academicDepartmentRouter } from '../modules/academicDepartment/academicDepartment.route'
 import facultyRouter from '../modules/faculty/faculty.route'
 import courseRouter from '../modules/course/course.route'
+import AdminRouter from '../modules/admin/admin.route'
 const app = express()
 
 const allRoutes = [
@@ -15,6 +16,7 @@ const allRoutes = [
   { path: '/api/v1/academic-faculties', route: academicFacultyRouter },
   { path: '/api/v1/academic-departments', route: academicDepartmentRouter },
   { path: '/api/v1/faculties', route: facultyRouter },
+  { path: '/api/v1/admins', route: AdminRouter },
   { path: '/api/v1/courses', route: courseRouter },
 ]
 

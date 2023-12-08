@@ -1,4 +1,5 @@
 import { TAcademicSemester } from '../academicSemester/academicSemester.interface'
+import AdminModel from '../admin/admin.model'
 import FacultyModel from '../faculty/faculty.model'
 import UserModel from './user.modal'
 
@@ -40,7 +41,6 @@ export const studentUserGeneratedId = async (
 }
 
 // generating faculty id----------------
-
 const findLastFacultyId = async () => {
   const lastFaculty = await FacultyModel.find({}).sort({ _id: -1 }).limit(1)
 
@@ -54,4 +54,19 @@ export const generateFacultyId = async () => {
     .padStart(4, '0')
 
   return `F-${currentId}`
+}
+
+// generating admin id
+
+const lastAdminUser = async () => {
+  const lastAdmin = await AdminModel.find({}).sort({ _id: -1 }).limit(1)
+  return lastAdmin[0]?.id ? lastAdmin[0].id.split('-')[1] : undefined
+}
+
+export const generateAdminUserId = async () => {
+  const lastAdmin = (await lastAdminUser()) || '0000'
+  const currentId = Number(Number(lastAdmin) + 1)
+    .toString()
+    .padStart(4, '0')
+  return `A-${currentId}`
 }
