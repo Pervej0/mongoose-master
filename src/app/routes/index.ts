@@ -7,8 +7,9 @@ import { academicDepartmentRouter } from '../modules/academicDepartment/academic
 import facultyRouter from '../modules/faculty/faculty.route'
 import courseRouter from '../modules/course/course.route'
 import AdminRouter from '../modules/admin/admin.route'
+import semesterRegistrationRouter from '../modules/semesterRegistration/semesterRegistration.route'
 const app = express()
-
+console.log('router')
 const allRoutes = [
   { path: '/api/v1/users/students', route: StudentRoutes },
   { path: '/api/v1/users', route: userRoutes },
@@ -18,6 +19,7 @@ const allRoutes = [
   { path: '/api/v1/faculties', route: facultyRouter },
   { path: '/api/v1/admins', route: AdminRouter },
   { path: '/api/v1/courses', route: courseRouter },
+  { path: '/api/v1/semister-registrations', route: semesterRegistrationRouter },
 ]
 
 allRoutes.forEach((item) => app.use(item.path, item.route))
