@@ -1,5 +1,6 @@
 import express from 'express'
 import {
+  GetAllAdmin,
   GetSingleAdmin,
   UpdateSingleAdmin,
   UpdateSingleFacultyDeleteField,
@@ -8,7 +9,7 @@ import { createDataValidation } from '../../config/middleware/createDataValidati
 import { updateAdminValidationSchema } from './admin.validation'
 const router = express.Router()
 
-// router.get('/')
+router.get('/', GetAllAdmin)
 router.get('/:adminId', GetSingleAdmin)
 router.patch(
   '/:adminId',

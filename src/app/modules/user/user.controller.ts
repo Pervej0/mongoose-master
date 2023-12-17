@@ -27,8 +27,8 @@ export const CreateFaculty: RequestHandler = useAsyncCatch(async (req, res) => {
 
 export const CreateAdmin: RequestHandler = useAsyncCatch(async (req, res) => {
   const { password, admin: adminData } = req.body
+
   const result = await CreateAdminDB(password, adminData)
-  console.log(result)
   SendResponse(res, {
     statusCode: 200,
     message: 'Admin Created Successfully!',

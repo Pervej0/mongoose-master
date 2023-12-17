@@ -48,11 +48,12 @@ const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
     message = err.message
     errorSources = [{ path: '', message: err?.message }]
   }
-
+  console.log(err, 'global error')
   return res.status(statusCode).json({
     success: false,
     message,
     errorSources,
+    realError: err,
     stack: config.NODE_ENV ? err?.stack : null,
   })
 }
