@@ -48,7 +48,6 @@ export const UpdateSingleSemesterRagistration: RequestHandler = useAsyncCatch(
   async (req, res) => {
     const updatedData = req.body
     const id = req.params.registrationId
-    console.log(id)
     const result = await UpdateSingleSemesterRagistrationDB(updatedData, id)
     SendResponse(res, {
       statusCode: 200,
