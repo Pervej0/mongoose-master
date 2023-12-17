@@ -6,7 +6,6 @@ import { Server } from 'http'
 let server: Server
 
 const main = async () => {
-  console.log('server')
   try {
     await mongoose.connect(config.url as string)
     app.listen(config.port, () => {

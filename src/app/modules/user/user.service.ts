@@ -100,10 +100,8 @@ export const CreateFacultyDB = async (
 export const CreateAdminDB = async (password: string, payload: TAdmin) => {
   const userData: Partial<TUser> = {}
   userData.password = password || config.defaultPassword
-  console.log(userData, 'efff')
 
   const generateId = await generateAdminUserId()
-  console.log(generateId, 'eeeeee')
   userData.id = generateId
   userData.role = 'admin'
   const session = await mongoose.startSession()
@@ -125,5 +123,7 @@ export const CreateAdminDB = async (password: string, payload: TAdmin) => {
   } catch (error) {
     await session.abortTransaction()
     await session.endSession()
+    console.log(error, 'eeeeeee')
+    throw new CustomError(httpStatus.BAD_REQUEST, 'Admin failed to createeee!')
   }
 }

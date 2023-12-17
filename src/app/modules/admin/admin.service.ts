@@ -1,22 +1,16 @@
+import QueryBuilder from '../../builder/QueryBuilder'
+import { FacultySearchableFields } from './admin.const'
 import { TAdmin } from './admin.interface'
 import AdminModel from './admin.model'
 
-// export const GetAllFacultyDB = async (query: Record<string, unknown>) => {
-//     const facultyQuery = new QueryBuilder(
-//       FacultyModel.find().populate({
-//         path: 'academicDepartment',
-//         populate: 'academicFaculty',
-//       }),
-//       query,
-//     )
-//       .search(FacultySearchableFields)
-//       .filter()
-//       .sort()
-//       .paginate()
-//       .fields()
-//     const result = await facultyQuery.modelQuery
-//     return result
-//   }
+export const GetAllAdminDB = async (query: Record<string, unknown>) => {
+  const adminQuery = new QueryBuilder(AdminModel.find(), query)
+    .search(FacultySearchableFields)
+    .filter()
+
+  const result = await adminQuery.modelQuery
+  return result
+}
 
 export const GetSingleAdminDB = async (id: string) => {
   const filter = { _id: id }

@@ -83,6 +83,7 @@ const AdminSchema = new Schema<TAdmin>(
     },
   },
   {
+    strict: 'throw',
     timestamps: true,
     toJSON: {
       virtuals: true,
