@@ -23,6 +23,4 @@ app.use(globalErrorHandler)
 //  notFound routes
 app.use(notFound)
 
-console.log('appppppppp')
-
 export default app
