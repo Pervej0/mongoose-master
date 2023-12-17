@@ -6,6 +6,7 @@ import { Server } from 'http'
 let server: Server
 
 const main = async () => {
+  console.log('server')
   try {
     await mongoose.connect(config.url as string)
     app.listen(config.port, () => {
@@ -15,8 +16,8 @@ const main = async () => {
     console.log(error)
   }
 }
-
 main()
+
 // unhandledRejection and uncaughtException error handling--
 process.on('unhandledRejection', () => {
   console.log('unhandledRejection error detected, server is shutting down!')
