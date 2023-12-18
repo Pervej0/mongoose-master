@@ -9,6 +9,7 @@ import courseRouter from '../modules/course/course.route'
 import AdminRouter from '../modules/admin/admin.route'
 import semesterRegistrationRouter from '../modules/semesterRegistration/semesterRegistration.route'
 import offeredCourseRouter from '../modules/offeredCourse/offeredCourse.route'
+import AuthRouter from '../modules/auth/auth.route'
 const app = express()
 
 const allRoutes = [
@@ -22,6 +23,7 @@ const allRoutes = [
   { path: '/api/v1/courses', route: courseRouter },
   { path: '/api/v1/semister-registrations', route: semesterRegistrationRouter },
   { path: '/api/v1/offered-courses', route: offeredCourseRouter },
+  { path: '/api/v1/auth', route: AuthRouter },
 ]
 
 allRoutes.forEach((item) => app.use(item.path, item.route))

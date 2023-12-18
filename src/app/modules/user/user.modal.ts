@@ -1,7 +1,9 @@
 import { Schema, model } from 'mongoose'
-import { TUser } from './user.interface'
+import { TUser, UserInterface } from './user.interface'
+import bcrypt from 'bcrypt'
+import config from '../../config'
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, UserInterface>(
   {
     id: {
       type: String,
@@ -14,6 +16,7 @@ const userSchema = new Schema<TUser>(
     status: {
       type: String,
       enum: ['active', 'blocked'],
+      default: 'active',
     },
     // instead of this two line by default mongoose provide that when "timestamps: true"
     // createdAt: { type: Date, required: [true, 'Created Date is required'] },
@@ -25,6 +28,25 @@ const userSchema = new Schema<TUser>(
   },
 )
 
-const UserModel = model<TUser>('Practice_User', userSchema)
+// mongoose save hook/middleware
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this
+  user.password = await bcrypt.hash(user.password, Number(config.salt_round))
+  next()
+})
+
+// static method
+userSchema.statics.isUserExistById = async function (id) {
+  return await UserModel.findOne({ id })
+}
+userSchema.statics.isPasswordMatched = async function (
+  plainPassword,
+  hashPassword,
+) {
+  return await bcrypt.compare(plainPassword, hashPassword)
+}
+
+const UserModel = model<TUser, UserInterface>('Practice_User', userSchema)
 
 export default UserModel

@@ -40,7 +40,6 @@ export const createAUserDB = async (
   const session = await startSession()
   try {
     session.startTransaction()
-
     const newUser = await UserModel.create([userData], { session })
     if (!newUser.length) {
       throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to Create user!')
@@ -60,6 +59,7 @@ export const createAUserDB = async (
   } catch (error) {
     await session.abortTransaction()
     await session.endSession()
+    console.log(error)
     throw new CustomError(httpStatus.BAD_REQUEST, 'Students Faild To Create!')
   }
 }
@@ -78,6 +78,7 @@ export const CreateFacultyDB = async (
   try {
     session.startTransaction()
     const newFaculty = await UserModel.create([userData], { session })
+
     if (!newFaculty.length) {
       throw new CustomError(httpStatus.BAD_REQUEST, 'User failed to create!')
     }
