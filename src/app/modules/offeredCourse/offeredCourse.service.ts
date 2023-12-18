@@ -132,11 +132,11 @@ export const GetAllOfferedCourseDB = async (query: Record<string, unknown>) => {
   return result
 }
 
-export const GetSingleOfferedCourseDB = async (
+export const UpdateSingleOfferedCourseDB = async (
   id: string,
   payload: Partial<TOfferedCourse>,
 ) => {
-  const { faculty } = payload
+  const { faculty, days, startTime, endTime } = payload
 
   // check offered course
   const isOfferdCourseExist = await OffoeredCourseModel.findById(id)
@@ -151,10 +151,34 @@ export const GetSingleOfferedCourseDB = async (
       'Faculty dose not exist in that offered course!',
     )
   }
-  // const semesterRegistration = isOfferedCourseExists.semesterRegistration;
+  const semesterRegistration = isOfferdCourseExist.semesterRegistration
   // get the schedules of the faculties
-
   // Checking the status of the semester registration
-  // const semesterRegistrationStatus =
-  //   await SemesterRegistration.findById(semesterRegistration);
+  const semesterRegistrationStatus =
+    await SemesterRegistrationModel.findById(semesterRegistration)
+
+  if (semesterRegistrationStatus?.status === 'UPCOMING') {
+    throw new CustomError(
+      httpStatus.BAD_REQUEST,
+      `You can not update this offered course as it is ${semesterRegistrationStatus?.status}`,
+    )
+  }
+
+  const newSchedule = { days, startTime, endTime }
+  const assignedSchedules = (await OffoeredCourseModel.find({
+    semesterRegistration,
+    faculty,
+    days: { $in: days },
+  }).select('days startTime endTime')) as TSchedule[]
+
+  if (hasTimeConflict(assignedSchedules, newSchedule)) {
+    throw new CustomError(
+      httpStatus.CONFLICT,
+      `This faculty is not available at that time ! Choose other time or day`,
+    )
+  }
+  const result = await OffoeredCourseModel.findByIdAndUpdate(id, payload, {
+    new: true,
+  })
+  return result
 }
