@@ -20,6 +20,7 @@ export interface TUser {
   status: 'active' | 'blocked'
   email?: string
   isDeleted: boolean
+  passwordUpdatedAt: Date
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions

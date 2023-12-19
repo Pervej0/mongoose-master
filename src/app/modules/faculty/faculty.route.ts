@@ -7,9 +7,10 @@ import {
 } from './faculty.controller'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
 import { updateFacultyValidationSchema } from './faculty.validation'
+import { auth } from '../../config/middleware/auth'
 const router = express.Router()
 
-router.get('/', GetAllFaculty)
+router.get('/', auth(), GetAllFaculty)
 router.get('/:facultyId', GetSingleFaculty)
 router.patch(
   '/:facultyId',

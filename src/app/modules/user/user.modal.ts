@@ -22,6 +22,7 @@ const userSchema = new Schema<TUser, UserInterface>(
     // createdAt: { type: Date, required: [true, 'Created Date is required'] },
     // updatedAt: { type: String, required: [true, 'Updated Date is required'] },
     isDeleted: { type: Boolean, default: false },
+    passwordUpdatedAt: Date,
   },
   {
     timestamps: true,
