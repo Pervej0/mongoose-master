@@ -1,23 +1,43 @@
 import httpStatus from 'http-status'
 import SendResponse from '../../utils/sendResponse'
 import useAsyncCatch from '../../utils/useAsyncCatch'
-import { changePasswordDB, logInUserDB } from './auth.service'
+import { changePasswordDB, logInUserDB, refreshTokenDB } from './auth.service'
+import config from '../../config'
 
 export const logInUser = useAsyncCatch(async (req, res) => {
   const result = await logInUserDB(req.body)
+  const { accessToken, refreshToken, needsPasswordChange } = result
+
+  res.cookie('refreshToken', refreshToken, {
+    secure: config.NODE_ENV === 'production',
+    httpOnly: true,
+  })
   SendResponse(res, {
     statusCode: httpStatus.OK,
     message: 'User is logged in succesfully!',
-    data: result,
+    data: {
+      accessToken,
+      needsPasswordChange,
+    },
   })
 })
 
 export const changePassword = useAsyncCatch(async (req, res) => {
-  console.log(req.user, req.body)
   await changePasswordDB(req.user, req.body)
   SendResponse(res, {
     statusCode: httpStatus.OK,
-    message: 'User password updated successfully succesfully!',
+    message: 'User password updated succesfully!',
     data: null,
+  })
+})
+
+export const refreshToken = useAsyncCatch(async (req, res) => {
+  const { refreshToken } = req.cookies
+  const result = await refreshTokenDB(refreshToken)
+
+  SendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Access token retrieved succesfully!',
+    data: result,
   })
 })

@@ -7,6 +7,7 @@ export const createDataValidation = (zodValidataion: AnyZodObject) => {
     async (req: Request, res: Response, next: NextFunction) => {
       await zodValidataion.parseAsync({
         body: req.body,
+        cookies: req.cookies,
       })
       next()
     },

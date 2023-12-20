@@ -22,7 +22,9 @@ const userSchema = new Schema<TUser, UserInterface>(
     // createdAt: { type: Date, required: [true, 'Created Date is required'] },
     // updatedAt: { type: String, required: [true, 'Updated Date is required'] },
     isDeleted: { type: Boolean, default: false },
-    passwordUpdatedAt: Date,
+    passwordUpdatedAt: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
@@ -46,6 +48,14 @@ userSchema.statics.isPasswordMatched = async function (
   hashPassword,
 ) {
   return await bcrypt.compare(plainPassword, hashPassword)
+}
+
+userSchema.statics.jwtIssuedAndPasswordChangedTime = async function (
+  jwtIssuedAt: number,
+  passwordChangedAt: Date,
+) {
+  const passwordChangedTime = new Date(passwordChangedAt).getTime() / 1000
+  return passwordChangedTime > jwtIssuedAt
 }
 
 const UserModel = model<TUser, UserInterface>('Practice_User', userSchema)

@@ -5,6 +5,7 @@ import httpStatus from 'http-status'
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import config from '..'
 import { TUser_role } from '../../modules/user/user.const'
+import UserModel from '../../modules/user/user.modal'
 
 export const auth = (...userRole: TUser_role[]) => {
   return useAsyncCatch(
@@ -18,26 +19,48 @@ export const auth = (...userRole: TUser_role[]) => {
         )
       }
       //   json token varified
-      jwt.verify(
+      const decode = jwt.verify(
         token,
         config.jwt_access_secret as string,
-        function (err, decode) {
-          if (err) {
-            throw new CustomError(
-              httpStatus.UNAUTHORIZED,
-              'You are not authorized!',
-            )
-          }
-          req.user = decode as JwtPayload
-        },
-      )
+      ) as JwtPayload
 
-      if (userRole && !userRole.includes(req.user.role)) {
+      const { userId, role, iat } = decode
+
+      if (userRole && !userRole.includes(role)) {
         throw new CustomError(
           httpStatus.UNAUTHORIZED,
           'You have no permission to access there!',
         )
       }
+      const user = await UserModel.isUserExistById(userId)
+      if (!user) {
+        throw new CustomError(httpStatus.FORBIDDEN, 'The user not found!')
+      }
+      if (user.isDeleted) {
+        throw new CustomError(
+          httpStatus.FORBIDDEN,
+          'The user has been deleted!',
+        )
+      }
+      if (user.status === 'blocked') {
+        throw new CustomError(httpStatus.FORBIDDEN, 'The usr is')
+      }
+
+      // check user password update so that new token can create
+      const isPasswordChangedRecently =
+        await UserModel.jwtIssuedAndPasswordChangedTime(
+          iat as number,
+          user.passwordUpdatedAt,
+        )
+
+      if (isPasswordChangedRecently) {
+        throw new CustomError(
+          httpStatus.FORBIDDEN,
+          'You updated your password, Please sign in your account!',
+        )
+      }
+
+      req.user = decode
       next()
     },
   )

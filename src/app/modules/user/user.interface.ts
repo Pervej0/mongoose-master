@@ -30,4 +30,8 @@ export interface UserInterface extends Model<TUser> {
     plainPassword: string,
     hashPassword: string,
   ): Promise<boolean>
+  jwtIssuedAndPasswordChangedTime(
+    jwtIssuedAt: number,
+    passwordChangedAt: Date,
+  ): Promise<boolean>
 }
