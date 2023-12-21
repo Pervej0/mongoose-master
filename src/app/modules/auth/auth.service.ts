@@ -24,7 +24,6 @@ export const logInUserDB = async (payload: TLoginUser) => {
     throw new CustomError(httpStatus.FORBIDDEN, 'This user is blocked!')
   }
 
-  console.log(payload.password, user.password, 'xxxx')
   //   checking if the password matched
   if (await UserModel.isPasswordMatched(payload.password, user.password)) {
     throw new CustomError(
@@ -150,4 +149,25 @@ export const refreshTokenDB = async (token: string) => {
   )
 
   return accessToken
+}
+
+export const forgetPasswordGetTokenDB = async (userId: string) => {
+  // chceck if user exist
+  const user = (await UserModel.isUserExistById(userId)) as TUser
+  if (!user) {
+    throw new Error('This user is not found !')
+  }
+  // checking if the user is already deleted
+  if (user.isDeleted) {
+    throw new CustomError(httpStatus.FORBIDDEN, 'This user is deleted !')
+  }
+  // checking if the user is blocked
+  if (user?.status === 'blocked') {
+    throw new CustomError(httpStatus.FORBIDDEN, 'This user is blocked!')
+  }
+
+  const jwtPayload = {
+    userId: user.id,
+    role: user.role,
+  }
 }

@@ -1,8 +1,14 @@
 import express, { Router } from 'express'
-import { changePassword, logInUser, refreshToken } from './auth.controller'
+import {
+  changePassword,
+  forgetPasswordGetToken,
+  logInUser,
+  refreshToken,
+} from './auth.controller'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
 import {
   chagnePasswordValidationSchema,
+  forgetPasswordValidationSchema,
   loginValidationSchema,
   refreshValidationSchema,
 } from './auth.validation'
@@ -22,6 +28,11 @@ router.post(
   '/refresh-token',
   createDataValidation(refreshValidationSchema),
   refreshToken,
+)
+router.post(
+  '/forget-password',
+  createDataValidation(forgetPasswordValidationSchema),
+  forgetPasswordGetToken,
 )
 
 const AuthRouter: Router = router
