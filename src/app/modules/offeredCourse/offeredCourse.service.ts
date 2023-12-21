@@ -134,7 +134,7 @@ export const UpdateSingleOfferedCourseDB = async (
   id: string,
   payload: Partial<TOfferedCourse>,
 ) => {
-  // const { faculty, days, startTime, endTime } = payload
+  const { faculty, days, startTime, endTime } = payload
 
   // check offered course
   const isOfferdCourseExist = await OffoeredCourseModel.findById(id)
@@ -162,19 +162,20 @@ export const UpdateSingleOfferedCourseDB = async (
     )
   }
 
-  // const assignedSchedules = (await OffoeredCourseModel.find({
-  //   semesterRegistration,
-  //   faculty,
-  //   days: { $in: days },
-  // }).select('days startTime endTime')) as TSchedule[]
-  // const newSchedule = { days, startTime, endTime }
+  const assignedSchedules = (await OffoeredCourseModel.find({
+    semesterRegistration,
+    faculty,
+    days: { $in: days },
+  }).select('days startTime endTime')) as TSchedule[]
 
-  // if (hasTimeConflict(assignedSchedules, newSchedule)) {
-  //   throw new CustomError(
-  //     httpStatus.CONFLICT,
-  //     `This faculty is not available at that time ! Choose other time or day`,
-  //   )
-  // }
+  const newSchedule = { days, startTime, endTime } as TSchedule
+
+  if (hasTimeConflict(assignedSchedules, newSchedule)) {
+    throw new CustomError(
+      httpStatus.CONFLICT,
+      `This faculty is not available at that time ! Choose other time or day`,
+    )
+  }
   const result = await OffoeredCourseModel.findByIdAndUpdate(id, payload, {
     new: true,
   })

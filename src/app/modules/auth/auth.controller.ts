@@ -1,7 +1,12 @@
 import httpStatus from 'http-status'
 import SendResponse from '../../utils/sendResponse'
 import useAsyncCatch from '../../utils/useAsyncCatch'
-import { changePasswordDB, logInUserDB, refreshTokenDB } from './auth.service'
+import {
+  changePasswordDB,
+  forgetPasswordGetTokenDB,
+  logInUserDB,
+  refreshTokenDB,
+} from './auth.service'
 import config from '../../config'
 
 export const logInUser = useAsyncCatch(async (req, res) => {
@@ -34,6 +39,17 @@ export const changePassword = useAsyncCatch(async (req, res) => {
 export const refreshToken = useAsyncCatch(async (req, res) => {
   const { refreshToken } = req.cookies
   const result = await refreshTokenDB(refreshToken)
+
+  SendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Access token retrieved succesfully!',
+    data: result,
+  })
+})
+
+export const forgetPasswordGetToken = useAsyncCatch(async (req, res) => {
+  const { id } = req.body
+  const result = await forgetPasswordGetTokenDB(id)
 
   SendResponse(res, {
     statusCode: httpStatus.OK,
