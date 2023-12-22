@@ -11,7 +11,7 @@ const userSchema = new Schema<TUser, UserInterface>(
     },
     password: { type: String, required: [true, 'Password is required'] },
     needsPasswordChange: { type: Boolean, default: true },
-    email: { type: String, required: false },
+    email: { type: String, required: true, unique: true },
     role: { type: String, enum: ['student', 'faculty', 'admin'] },
     status: {
       type: String,

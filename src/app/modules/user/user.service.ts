@@ -16,6 +16,7 @@ import FacultyModel from '../faculty/faculty.model'
 import { TFaculty } from '../faculty/faculty.interface'
 import { TAdmin } from '../admin/admin.interface'
 import AdminModel from '../admin/admin.model'
+import { JwtPayload } from 'jsonwebtoken'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
@@ -28,6 +29,8 @@ export const createAUserDB = async (
 
   // set user role as student
   userData.role = 'student'
+  // set user email
+  userData.email = studentData.email
   // user semsester info
   const admissionSemester = await AcademicSemesterModel.findById(
     studentData.admissionSemester,
@@ -71,7 +74,8 @@ export const CreateFacultyDB = async (
   const userData: Partial<TUser> = {}
   userData.password = password || config.defaultPassword
   userData.role = 'faculty'
-
+  // set user email
+  userData.email = facultyData.email
   const generateId = await generateFacultyId()
   userData.id = generateId
   const session = await startSession()
@@ -105,6 +109,9 @@ export const CreateAdminDB = async (password: string, payload: TAdmin) => {
   const generateId = await generateAdminUserId()
   userData.id = generateId
   userData.role = 'admin'
+  // set user email
+  userData.email = payload.email
+
   const session = await mongoose.startSession()
   try {
     session.startTransaction()
@@ -127,4 +134,33 @@ export const CreateAdminDB = async (password: string, payload: TAdmin) => {
     console.log(error, 'eeeeeee')
     throw new CustomError(httpStatus.BAD_REQUEST, 'Admin failed to createeee!')
   }
+}
+
+export const getSingleUserDB = async (payload: JwtPayload) => {
+  let result
+  if (payload.role === 'student') {
+    result = await StudentModel.findOne({ id: payload.userId })
+      .populate({
+        path: 'admissionSemester',
+      })
+      .populate({
+        path: 'academicDepartment',
+        populate: { path: 'academicFaculty' },
+      })
+  } else if (payload.role === 'faculty') {
+    result = await FacultyModel.findOne({ id: payload.userId })
+  } else if (payload.role === 'admin') {
+    result = await AdminModel.findOne({ id: payload.userId })
+  }
+  return result
+}
+
+export const changeStatusDB = async (id: string, status: string) => {
+  console.log(id, status)
+  const result = await UserModel.findOneAndUpdate(
+    { id },
+    { status },
+    { new: true },
+  )
+  return result
 }

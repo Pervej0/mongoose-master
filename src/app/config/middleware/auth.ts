@@ -60,7 +60,7 @@ export const auth = (...userRole: TUser_role[]) => {
         )
       }
 
-      req.user = decode
+      req.user = decode as JwtPayload
       next()
     },
   )

@@ -6,6 +6,7 @@ import {
   forgetPasswordGetTokenDB,
   logInUserDB,
   refreshTokenDB,
+  resetPasswordDB,
 } from './auth.service'
 import config from '../../config'
 
@@ -54,6 +55,17 @@ export const forgetPasswordGetToken = useAsyncCatch(async (req, res) => {
   SendResponse(res, {
     statusCode: httpStatus.OK,
     message: 'Access token retrieved succesfully!',
+    data: result,
+  })
+})
+
+export const resetPassword = useAsyncCatch(async (req, res) => {
+  const token = req.headers.authorization
+  const result = await resetPasswordDB(req.body, token as string)
+
+  SendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'Password reseted succesfully!',
     data: result,
   })
 })

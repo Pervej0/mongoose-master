@@ -18,7 +18,7 @@ export interface TUser {
   needsPasswordChange?: boolean
   role: 'student' | 'faculty' | 'admin'
   status: 'active' | 'blocked'
-  email?: string
+  email: string
   isDeleted: boolean
   passwordUpdatedAt: Date
 }

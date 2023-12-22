@@ -4,6 +4,7 @@ import {
   forgetPasswordGetToken,
   logInUser,
   refreshToken,
+  resetPassword,
 } from './auth.controller'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
 import {
@@ -11,6 +12,7 @@ import {
   forgetPasswordValidationSchema,
   loginValidationSchema,
   refreshValidationSchema,
+  resetPasswordValidationSchema,
 } from './auth.validation'
 import { auth } from '../../config/middleware/auth'
 import { USER_ROLE } from '../user/user.const'
@@ -29,10 +31,19 @@ router.post(
   createDataValidation(refreshValidationSchema),
   refreshToken,
 )
+
+// create a reset link client when trigger below route
 router.post(
   '/forget-password',
   createDataValidation(forgetPasswordValidationSchema),
   forgetPasswordGetToken,
+)
+
+// reset your password in individual route
+router.post(
+  '/reset-password',
+  createDataValidation(resetPasswordValidationSchema),
+  resetPassword,
 )
 
 const AuthRouter: Router = router

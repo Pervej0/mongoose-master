@@ -1,13 +1,13 @@
 import httpStatus from 'http-status'
 import CustomError from '../../error/customError'
 import UserModel from '../user/user.modal'
-import { TChangePassword, TLoginUser } from './auth.interface'
+import { TChangePassword, TLoginUser, TResetPassword } from './auth.interface'
 import { TUser } from '../user/user.interface'
 import config from '../../config'
 import { JwtPayload } from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
-import { createToken } from './utils.auth'
-import jwt from 'jsonwebtoken'
+import { createToken, verifyToken } from './utils.auth'
+import sendEmail from '../../utils/sendEmail'
 
 export const logInUserDB = async (payload: TLoginUser) => {
   // chceck if user exist
@@ -24,12 +24,14 @@ export const logInUserDB = async (payload: TLoginUser) => {
     throw new CustomError(httpStatus.FORBIDDEN, 'This user is blocked!')
   }
 
+  console.log(payload.password, user.password, 'yyyy')
   //   checking if the password matched
-  if (await UserModel.isPasswordMatched(payload.password, user.password)) {
-    throw new CustomError(
-      httpStatus.FORBIDDEN,
-      'User password dose not matched!',
-    )
+  const passwordMatched = await UserModel.isPasswordMatched(
+    payload.password,
+    user.password,
+  )
+  if (!passwordMatched) {
+    throw new CustomError(httpStatus.FORBIDDEN, 'User password do not matched!')
   }
 
   const jwtPayload = {
@@ -104,10 +106,7 @@ export const changePasswordDB = async (
 
 export const refreshTokenDB = async (token: string) => {
   //   json token varified
-  const decode = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload
+  const decode = verifyToken(token, config.jwt_refresh_secret as string)
 
   const { userId, iat } = decode
 
@@ -170,4 +169,55 @@ export const forgetPasswordGetTokenDB = async (userId: string) => {
     userId: user.id,
     role: user.role,
   }
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    '10m',
+  )
+
+  const createResetLink = `${config.reset_password_client_link}/api/v1?id=${user.id}&token=${accessToken}`
+  sendEmail(user.email, createResetLink)
+  console.log(createResetLink, 'ee')
+}
+
+export const resetPasswordDB = async (
+  payload: TResetPassword,
+  token: string,
+) => {
+  // chceck if user exist
+  const user = (await UserModel.isUserExistById(payload.id)) as TUser
+  if (!user) {
+    throw new Error('This user is not found !')
+  }
+  // checking if the user is already deleted
+  if (user.isDeleted) {
+    throw new CustomError(httpStatus.FORBIDDEN, 'This user is deleted !')
+  }
+  // checking if the user is blocked
+  if (user?.status === 'blocked') {
+    throw new CustomError(httpStatus.FORBIDDEN, 'This user is blocked!')
+  }
+  // check user sent valid token or not!
+  const decode = verifyToken(token, config.jwt_access_secret as string)
+  if (payload.id !== decode.userId) {
+    throw new CustomError(httpStatus.FORBIDDEN, 'You are forbidden to access!')
+  }
+
+  // hash new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.salt_round),
+  )
+  const result = await UserModel.findOneAndUpdate(
+    { id: decode.userId, role: decode.role },
+    {
+      password: newHashedPassword,
+      needsPasswordChange: false,
+      passwordUpdatedAt: new Date(),
+    },
+  )
+  console.log(result, 'xxx')
+
+  return null
 }
