@@ -43,7 +43,7 @@ export const auth = (...userRole: TUser_role[]) => {
         )
       }
       if (user.status === 'blocked') {
-        throw new CustomError(httpStatus.FORBIDDEN, 'The usr is')
+        throw new CustomError(httpStatus.FORBIDDEN, 'The user is blocked')
       }
 
       // check user password update so that new token can create

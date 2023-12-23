@@ -35,8 +35,7 @@ export const CreateFaculty: RequestHandler = useAsyncCatch(async (req, res) => {
 
 export const CreateAdmin: RequestHandler = useAsyncCatch(async (req, res) => {
   const { password, admin: adminData } = req.body
-
-  const result = await CreateAdminDB(password, adminData)
+  const result = await CreateAdminDB(req.file, password, adminData)
   SendResponse(res, {
     statusCode: 200,
     message: 'Admin Created Successfully!',
@@ -59,9 +58,7 @@ export const getSingleUser: RequestHandler = useAsyncCatch(async (req, res) => {
 
 export const changeStatus: RequestHandler = useAsyncCatch(async (req, res) => {
   const id = req.params.id
-  const status = req.body.status
-  console.log('controller')
-  const result = await changeStatusDB(id, status)
+  const result = await changeStatusDB(id, req.body)
   SendResponse(res, {
     statusCode: 200,
     message: 'User retrieved Successfully!',

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import config from '../../config'
 import { StudentModel } from '../student/student.model'
 import { TStudent } from '../student/student.interface'
@@ -17,6 +18,8 @@ import { TFaculty } from '../faculty/faculty.interface'
 import { TAdmin } from '../admin/admin.interface'
 import AdminModel from '../admin/admin.model'
 import { JwtPayload } from 'jsonwebtoken'
+import { sendImageToCloudinary } from '../../utils/sendImageToClodudinary'
+// import { sendImageToCloudinary  } from '../../utils/sendImageToClodudinary'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
@@ -101,8 +104,11 @@ export const CreateFacultyDB = async (
 }
 
 // admin user
-
-export const CreateAdminDB = async (password: string, payload: TAdmin) => {
+export const CreateAdminDB = async (
+  file: any,
+  password: string,
+  payload: TAdmin,
+) => {
   const userData: Partial<TUser> = {}
   userData.password = password || config.defaultPassword
 
@@ -111,6 +117,12 @@ export const CreateAdminDB = async (password: string, payload: TAdmin) => {
   userData.role = 'admin'
   // set user email
   userData.email = payload.email
+  const imageName = `${generateId}-${payload?.name?.firstName}`
+
+  const { secure_url } = (await sendImageToCloudinary(
+    imageName,
+    file?.path,
+  )) as any
 
   const session = await mongoose.startSession()
   try {
@@ -124,6 +136,7 @@ export const CreateAdminDB = async (password: string, payload: TAdmin) => {
     }
     payload.user = newAdminUser[0]._id
     payload.id = newAdminUser[0].id
+    payload.profileImg = secure_url
     const newAdmin = await AdminModel.create([payload], [session])
     await session.commitTransaction()
     await session.endSession()
@@ -155,12 +168,14 @@ export const getSingleUserDB = async (payload: JwtPayload) => {
   return result
 }
 
-export const changeStatusDB = async (id: string, status: string) => {
-  console.log(id, status)
-  const result = await UserModel.findOneAndUpdate(
-    { id },
-    { status },
-    { new: true },
-  )
+export const changeStatusDB = async (
+  id: string,
+  payload: { status: string },
+) => {
+  console.log(id, 'e')
+  const result = await UserModel.findByIdAndUpdate(id, payload, {
+    new: true,
+  })
+  console.log(result)
   return result
 }

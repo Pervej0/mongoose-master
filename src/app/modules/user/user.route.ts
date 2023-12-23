@@ -1,7 +1,8 @@
-import express, { Router } from 'express'
+import express, { NextFunction, Request, Response, Router } from 'express'
 import {
   CreateAdmin,
   CreateFaculty,
+  changeStatus,
   createAUser,
   getSingleUser,
 } from './user.controller'
@@ -12,7 +13,7 @@ import { AdminValidationSchema } from '../admin/admin.validation'
 import { auth } from '../../config/middleware/auth'
 import { USER_ROLE } from './user.const'
 import { changeStatusValidataionSchema } from './user.validation'
-import { changePassword } from '../auth/auth.controller'
+import { upload } from '../../utils/sendImageToClodudinary'
 // import { auth } from '../../config/middleware/auth'
 const router = express.Router()
 
@@ -32,6 +33,11 @@ router.post(
 
 router.post(
   '/create-admin',
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data)
+    next()
+  },
   createDataValidation(AdminValidationSchema),
   CreateAdmin,
 )
@@ -46,7 +52,7 @@ router.post(
   '/change-status/:id',
   auth(USER_ROLE.admin),
   createDataValidation(changeStatusValidataionSchema),
-  changePassword,
+  changeStatus,
 )
 
 export const userRoutes: Router = router

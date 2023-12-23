@@ -18,9 +18,6 @@ const userSchema = new Schema<TUser, UserInterface>(
       enum: ['active', 'blocked'],
       default: 'active',
     },
-    // instead of this two line by default mongoose provide that when "timestamps: true"
-    // createdAt: { type: Date, required: [true, 'Created Date is required'] },
-    // updatedAt: { type: String, required: [true, 'Updated Date is required'] },
     isDeleted: { type: Boolean, default: false },
     passwordUpdatedAt: {
       type: Date,

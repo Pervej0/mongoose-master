@@ -119,9 +119,8 @@ export const refreshTokenDB = async (token: string) => {
     throw new CustomError(httpStatus.FORBIDDEN, 'The user has been deleted!')
   }
   if (user.status === 'blocked') {
-    throw new CustomError(httpStatus.FORBIDDEN, 'The usr is')
+    throw new CustomError(httpStatus.FORBIDDEN, 'The usr is blocked')
   }
-
   // check user password update so that new token can create
   const isPasswordChangedRecently =
     await UserModel.jwtIssuedAndPasswordChangedTime(
