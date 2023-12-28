@@ -10,7 +10,7 @@ import {
   generateFacultyId,
   studentUserGeneratedId,
 } from './user.util'
-import mongoose, { startSession } from 'mongoose'
+import mongoose from 'mongoose'
 import CustomError from '../../error/customError'
 import httpStatus from 'http-status'
 import FacultyModel from '../faculty/faculty.model'
@@ -43,7 +43,7 @@ export const createAUserDB = async (
     throw new Error('Admission semester data could not found!')
   }
   userData.id = await studentUserGeneratedId(admissionSemester)
-  const session = await startSession()
+  const session = await mongoose.startSession()
   try {
     session.startTransaction()
     const newUser = await UserModel.create([userData], { session })
@@ -62,11 +62,10 @@ export const createAUserDB = async (
     await session.commitTransaction()
     await session.endSession()
     return newStudent
-  } catch (error) {
+  } catch (error: any) {
     await session.abortTransaction()
     await session.endSession()
-    console.log(error)
-    throw new CustomError(httpStatus.BAD_REQUEST, 'Students Faild To Create!')
+    throw new CustomError(httpStatus.BAD_REQUEST, error)
   }
 }
 
@@ -81,7 +80,7 @@ export const CreateFacultyDB = async (
   userData.email = facultyData.email
   const generateId = await generateFacultyId()
   userData.id = generateId
-  const session = await startSession()
+  const session = await mongoose.startSession()
   try {
     session.startTransaction()
     const newFaculty = await UserModel.create([userData], { session })
@@ -141,11 +140,10 @@ export const CreateAdminDB = async (
     await session.commitTransaction()
     await session.endSession()
     return newAdmin
-  } catch (error) {
+  } catch (error: any) {
     await session.abortTransaction()
     await session.endSession()
-    console.log(error, 'eeeeeee')
-    throw new CustomError(httpStatus.BAD_REQUEST, 'Admin failed to createeee!')
+    throw new CustomError(httpStatus.BAD_REQUEST, error)
   }
 }
 
