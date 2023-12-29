@@ -1,11 +1,11 @@
 import httpStatus from 'http-status'
 import SendResponse from '../../utils/sendResponse'
 import useAsyncCatch from '../../utils/useAsyncCatch'
-import { createEnrolledCourseIntoDB } from './enrolledCourse.service'
+import { createEnrolledCourseDB } from './enrolledCourse.service'
 
 export const createEnrolledCourse = useAsyncCatch(async (req, res) => {
   const userId = req.user.userId
-  const result = await createEnrolledCourseIntoDB(userId, req.body)
+  const result = await createEnrolledCourseDB(userId, req.body)
 
   SendResponse(res, {
     statusCode: httpStatus.OK,

@@ -45,22 +45,22 @@ const enrolledCourseSchema = new Schema<TEnrolledCourse>({
   },
   academicSemester: {
     type: Schema.Types.ObjectId,
-    ref: 'Academic-semester',
+    ref: 'AcademicSemester',
     required: true,
   },
   academicFaculty: {
     type: Schema.Types.ObjectId,
-    ref: 'Academic-faculty',
+    ref: 'AcademicFaculty',
     required: true,
   },
   academicDepartment: {
     type: Schema.Types.ObjectId,
-    ref: 'Academic-department',
+    ref: 'AcademicDepartment',
     required: true,
   },
   offeredCourse: {
     type: Schema.Types.ObjectId,
-    ref: 'offeredCourse',
+    ref: 'OfferedCourse',
     required: true,
   },
   course: {

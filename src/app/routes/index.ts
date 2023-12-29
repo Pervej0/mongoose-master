@@ -24,6 +24,7 @@ const allRoutes = [
   { path: '/api/v1/courses', route: courseRouter },
   { path: '/api/v1/semister-registrations', route: semesterRegistrationRouter },
   { path: '/api/v1/offered-courses', route: offeredCourseRouter },
+  { path: '/api/v1/enrolled-courses', route: enrolledCourseRouter },
   { path: '/api/v1/auth', route: AuthRouter },
   { path: '/api/v1/enrolled-courses', route: enrolledCourseRouter },
 ]
