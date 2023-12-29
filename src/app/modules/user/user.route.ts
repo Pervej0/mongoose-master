@@ -19,7 +19,11 @@ const router = express.Router()
 
 router.post(
   '/create-student',
-  // auth(),
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data)
+    next()
+  },
   createDataValidation(studentZodValidationSchema),
   createAUser,
 )

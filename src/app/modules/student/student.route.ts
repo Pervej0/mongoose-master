@@ -5,11 +5,14 @@ import {
   studentZodValidationSchema,
 } from './student.zod.validation'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
+import { auth } from '../../config/middleware/auth'
+import { USER_ROLE } from '../user/user.const'
 
 const router = express.Router()
 
 router.post(
   '/create-student',
+  auth(USER_ROLE.student),
   createDataValidation(studentZodValidationSchema),
   studentControllers.createAStudent,
 )

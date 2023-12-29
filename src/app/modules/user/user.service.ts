@@ -19,10 +19,10 @@ import { TAdmin } from '../admin/admin.interface'
 import AdminModel from '../admin/admin.model'
 import { JwtPayload } from 'jsonwebtoken'
 import { sendImageToCloudinary } from '../../utils/sendImageToClodudinary'
-// import { sendImageToCloudinary  } from '../../utils/sendImageToClodudinary'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
+  file: any,
   password: string,
   studentData: TStudent,
 ) => {
@@ -43,6 +43,14 @@ export const createAUserDB = async (
     throw new Error('Admission semester data could not found!')
   }
   userData.id = await studentUserGeneratedId(admissionSemester)
+
+  const imageName = `${userData.id}-${studentData?.name?.firstName}`
+
+  const { secure_url } = (await sendImageToCloudinary(
+    imageName,
+    file?.path,
+  )) as any
+
   const session = await startSession()
   try {
     session.startTransaction()
@@ -55,6 +63,7 @@ export const createAUserDB = async (
     // set embeded id
     studentData.id = newUser[0].id // embedded id
     studentData.user = newUser[0]._id // reference id
+    studentData.studentProfile = secure_url
     const newStudent = await StudentModel.create([studentData], { session })
     if (!newStudent.length) {
       throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to Create Student!')

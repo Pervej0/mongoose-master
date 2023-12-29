@@ -13,7 +13,7 @@ import httpStatus from 'http-status'
 
 export const createAUser: RequestHandler = useAsyncCatch(async (req, res) => {
   const { password, student: studentData } = req.body
-  const result = await createAUserDB(password, studentData)
+  const result = await createAUserDB(req.file, password, studentData)
 
   SendResponse(res, {
     statusCode: 200,
