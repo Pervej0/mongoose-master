@@ -6,8 +6,8 @@ import {
   studentName,
 } from './student.interface'
 import validator from 'validator'
-import config from '../../config'
-import bcrypt from 'bcrypt'
+// import config from '../../config'
+// import bcrypt from 'bcrypt'
 
 const studentNameSchema = new Schema<studentName>({
   firstName: {
@@ -76,7 +76,7 @@ const studentSchema = new Schema<TStudent>({
   id: { type: String, unique: true },
   password: {
     type: String,
-    required: [true, 'Password is required'],
+    required: [false, 'Password is required'],
     max: [20, 'Password can not be more than 20 characters'],
   },
   user: {
@@ -142,12 +142,12 @@ const studentSchema = new Schema<TStudent>({
 })
 
 // mongoose save hook/middleware
-studentSchema.pre('save', async function (next) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this
-  user.password = await bcrypt.hash(user.password, Number(config.salt_round))
-  next()
-})
+// studentSchema.pre('save', async function (next) {
+//   // eslint-disable-next-line @typescript-eslint/no-this-alias
+//   const user = this
+//   user.password = await bcrypt.hash(user.password, Number(config.salt_round))
+//   next()
+// })
 
 // studentNameSchema.pre('findOneAndUpdate', async function (next) {
 //   const query = this.getQuery()

@@ -8,7 +8,7 @@ const UserZodValidatationSchema = z.object({
       .max(30, { message: 'usrename can not be more than 30 characters!' })
       .trim(),
     password: z
-      .string({ required_error: 'password is required!' })
+      .string({ required_error: 'password is requiredddddddddd!' })
       .min(6, { message: 'password must be more than 6 characters' })
       .max(20, { message: 'maximum limits extended!' }),
     needsPasswordChange: z.boolean().optional().default(true),
