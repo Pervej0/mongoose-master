@@ -6,6 +6,7 @@ import { StudentModel } from '../student/student.model'
 import EnrolledCourseModel from './enrolledCourse.model'
 import mongoose from 'mongoose'
 import SemesterRegistrationModel from '../semesterRegistration/semesterRegistration.model'
+import { CourseModel } from '../course/course.model'
 
 export const createEnrolledCourseDB = async (
   userId: string,
@@ -39,13 +40,13 @@ export const createEnrolledCourseDB = async (
   // total enrolled credits + new enroll credit > maxCredits (maxCredit is fixed for per semester)
 
   const maxCreditsForSemester = await SemesterRegistrationModel.findById(
-    { id: OfferedCourseExist.semesterRegistration },
+    { _id: OfferedCourseExist.semesterRegistration },
     { maxCredit: 1 },
   )
 
   const maxCredits = maxCreditsForSemester?.maxCredit
 
-  const enrolledCourse = await EnrolledCourseModel.aggregate([
+  const enrolledCourseTotallCredits = await EnrolledCourseModel.aggregate([
     // step-1
     {
       $match: {
@@ -53,9 +54,51 @@ export const createEnrolledCourseDB = async (
         student: student?._id,
       },
     },
+    // stage-2
+    {
+      $lookup: {
+        from: 'courses',
+        localField: 'course',
+        foreignField: '_id',
+        as: 'enrolledCourseData',
+      },
+    },
+    // stage-3  unwind enrolledCourseData
+    { $unwind: '$enrolledCourseData' },
+    // stage-4
+    {
+      $group: {
+        _id: null,
+        totalEnroledCredits: { $sum: '$enrolledCourseData.credits' },
+      },
+    },
+    // stage-5
+    { $project: { _id: 0, totalEnroledCredits: 1 } },
   ])
 
-  return
+  // check credits extend from limites semester credits or not
+  // check students credits extended more than maxCredits
+  const totalCredits =
+    enrolledCourseTotallCredits.length > 0
+      ? enrolledCourseTotallCredits[0].totalEnroledCredits
+      : 0
+
+  const course = await CourseModel.findById(OfferedCourseExist.course, {
+    credits: 1,
+  })
+  const CurrentCredits = course?.credits
+
+  if (
+    totalCredits &&
+    maxCredits &&
+    totalCredits + CurrentCredits > maxCredits
+  ) {
+    throw new CustomError(
+      httpStatus.BAD_REQUEST,
+      'You have exceeded maximum number of credits !',
+    )
+  }
+
   const session = await mongoose.startSession()
 
   try {
@@ -97,4 +140,11 @@ export const createEnrolledCourseDB = async (
     await session.endSession()
     throw new Error(error)
   }
+}
+
+export const updateEnrolledCourseDB = async (
+  id: string,
+  payload: Partial<TEnrolledCourse>,
+) => {
+  console.log(payload)
 }
