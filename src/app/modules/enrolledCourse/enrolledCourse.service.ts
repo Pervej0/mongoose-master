@@ -7,6 +7,8 @@ import EnrolledCourseModel from './enrolledCourse.model'
 import mongoose from 'mongoose'
 import SemesterRegistrationModel from '../semesterRegistration/semesterRegistration.model'
 import { CourseModel } from '../course/course.model'
+import FacultyModel from '../faculty/faculty.model'
+import { CountGradeAndPoints } from './enrolledCourse.utils'
 
 export const createEnrolledCourseDB = async (
   userId: string,
@@ -143,8 +145,68 @@ export const createEnrolledCourseDB = async (
 }
 
 export const updateEnrolledCourseDB = async (
-  id: string,
+  facultyId: string,
   payload: Partial<TEnrolledCourse>,
 ) => {
-  console.log(payload)
+  const { semesterRegistration, offeredCourse, courseMarks, student } = payload
+
+  const OfferedCourseExist = await OffoeredCourseModel.findById(offeredCourse)
+  if (!OfferedCourseExist) {
+    throw new CustomError(
+      httpStatus.NOT_FOUND,
+      'Offered course dose not exist!',
+    )
+  }
+
+  const semesterRegistrationExist =
+    await SemesterRegistrationModel.findById(semesterRegistration)
+  if (!semesterRegistrationExist) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Semester dose not exist!')
+  }
+
+  const isStudentExists = await StudentModel.findById(student)
+  if (!isStudentExists) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Student not found !')
+  }
+
+  // is course belong to the faculty check
+  const faculty = await FacultyModel.findOne({ id: facultyId }, { _id: 1 })
+  if (!faculty) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Faculty not found !')
+  }
+  const isCourseBelongToTheFaculty = await EnrolledCourseModel.findOne({
+    semesterRegistration,
+    offeredCourse,
+    student,
+    faculty: faculty._id,
+  })
+  if (!isCourseBelongToTheFaculty) {
+    throw new CustomError(httpStatus.FORBIDDEN, 'You are forbidden to access !')
+  }
+
+  const modifiedData: Record<string, unknown> = { ...courseMarks }
+  if (courseMarks?.finalTerm) {
+    const { grade, gradePoints } = CountGradeAndPoints(
+      isCourseBelongToTheFaculty.courseMarks,
+    )
+    modifiedData.grade = grade
+    modifiedData.gradePoints = gradePoints
+    modifiedData.isCompleted = true
+  }
+
+  if (courseMarks && Object.keys(courseMarks).length > 0) {
+    for (const [key, value] of Object.entries(courseMarks)) {
+      modifiedData[`courseMarks.${key}`] = value
+    }
+  }
+  const result = await EnrolledCourseModel.findByIdAndUpdate(
+    isCourseBelongToTheFaculty._id,
+    modifiedData,
+    { new: true },
+  )
+  return result
+}
+
+export const getAllEnrolledCourseDB = (query: Record<string, unknown>) => {
+  console.log(query)
 }

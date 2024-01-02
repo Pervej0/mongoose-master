@@ -10,11 +10,13 @@ class QueryBuilder<T> {
   }
   search(searchableFields: string[]) {
     const searchTearm = this.query.searchTerm || ''
-    this.modelQuery = this.modelQuery.find({
-      $or: searchableFields?.map((field) => ({
-        [field]: { $regex: searchTearm, $options: 'i' },
-      })),
-    } as FilterQuery<T>)
+    if (searchTearm) {
+      this.modelQuery = this.modelQuery.find({
+        $or: searchableFields?.map((field) => ({
+          [field]: { $regex: searchTearm, $options: 'i' },
+        })),
+      } as FilterQuery<T>)
+    }
     return this
   }
   filter() {
@@ -46,6 +48,19 @@ class QueryBuilder<T> {
     fieldsData = (this.query.fields as string)?.split(',').join(' ')
     this.modelQuery = this.modelQuery.select(fieldsData)
     return this
+  }
+  async countTotal() {
+    const queriesCount = this.modelQuery.getFilter()
+    const total = await this.modelQuery.model.countDocuments(queriesCount)
+    const page = Number(this.query.page) || 1
+    const limit = Number(this.query.limit) || 10
+    const totalPage = Math.ceil(total / limit)
+    return {
+      page,
+      limit,
+      total,
+      totalPage,
+    }
   }
 }
 

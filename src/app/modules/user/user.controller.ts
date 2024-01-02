@@ -14,7 +14,6 @@ import httpStatus from 'http-status'
 export const createAUser: RequestHandler = useAsyncCatch(async (req, res) => {
   const { password, student: studentData } = req.body
   const result = await createAUserDB(req.file, password, studentData)
-
   SendResponse(res, {
     statusCode: 200,
     message: 'Successfully user has been created!',

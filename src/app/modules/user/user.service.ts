@@ -42,7 +42,17 @@ export const createAUserDB = async (
   if (!admissionSemester) {
     throw new Error('Admission semester data could not found!')
   }
-  userData.id = await studentUserGeneratedId(admissionSemester)
+
+  const generatedId = await studentUserGeneratedId(admissionSemester)
+  console.log(generatedId, 'xx')
+  const imageName = `${generatedId}-${studentData?.name?.firstName}`
+  // create a student
+  const { secure_url } = (await sendImageToCloudinary(
+    imageName,
+    file?.path,
+  )) as any
+
+  userData.id = generatedId
   const session = await mongoose.startSession()
   try {
     session.startTransaction()
@@ -50,7 +60,6 @@ export const createAUserDB = async (
     if (!newUser.length) {
       throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to Create user!')
     }
-    // create a student
 
     // set embeded id
     studentData.id = newUser[0].id // embedded id
