@@ -7,6 +7,8 @@ import {
 } from './academicSemester.controller'
 import academiSemesterZodValidationSchema from './academicSemesterValidation'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
+import { auth } from '../../config/middleware/auth'
+import { USER_ROLE } from '../user/user.const'
 const router = express.Router()
 
 router.post(
@@ -15,7 +17,11 @@ router.post(
   CreateAcademicSemester,
 )
 
-router.get('/', GetAllAcademicSemester)
+router.get(
+  '/',
+  auth(USER_ROLE.admin, USER_ROLE.faculty),
+  GetAllAcademicSemester,
+)
 router.get('/:semesterId', GetSingleAcademicSemester)
 router.patch('/:semesterId', UpdateSingleAcademicSemester)
 

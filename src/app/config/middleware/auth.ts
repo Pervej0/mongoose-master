@@ -2,10 +2,10 @@ import { NextFunction, Response, Request } from 'express'
 import useAsyncCatch from '../../utils/useAsyncCatch'
 import CustomError from '../../error/customError'
 import httpStatus from 'http-status'
-import jwt, { JwtPayload } from 'jsonwebtoken'
-import config from '..'
+import { JwtPayload } from 'jsonwebtoken'
 import { TUser_role } from '../../modules/user/user.const'
 import UserModel from '../../modules/user/user.modal'
+import { decodeToken } from '../../utils/decodeToken'
 
 export const auth = (...userRole: TUser_role[]) => {
   return useAsyncCatch(
@@ -19,17 +19,18 @@ export const auth = (...userRole: TUser_role[]) => {
         )
       }
       //   json token varified
-      const decode = jwt.verify(
-        token,
-        config.jwt_access_secret as string,
-      ) as JwtPayload
+      // const decode = jwt.verify(
+      //   token,
+      //   config.jwt_access_secret as string,
+      // ) as JwtPayload
+      const decode = (await decodeToken(token)) as JwtPayload
 
       const { userId, role, iat } = decode
-
+      console.log(decode, 'xxxxx')
       if (userRole && !userRole.includes(role)) {
         throw new CustomError(
           httpStatus.UNAUTHORIZED,
-          'You have no permission to access there!',
+          'You have no permission to access there fucccc!',
         )
       }
       const user = await UserModel.isUserExistById(userId)
@@ -60,7 +61,7 @@ export const auth = (...userRole: TUser_role[]) => {
         )
       }
 
-      req.user = decode as JwtPayload
+      req.user = decode
       next()
     },
   )

@@ -24,7 +24,6 @@ export const logInUserDB = async (payload: TLoginUser) => {
     throw new CustomError(httpStatus.FORBIDDEN, 'This user is blocked!')
   }
 
-  console.log(payload.password, user.password, 'yyyy')
   //   checking if the password matched
   const passwordMatched = await UserModel.isPasswordMatched(
     payload.password,
