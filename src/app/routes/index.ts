@@ -26,6 +26,7 @@ const allRoutes = [
   { path: '/api/v1/offered-courses', route: offeredCourseRouter },
   { path: '/api/v1/enrolled-courses', route: enrolledCourseRouter },
   { path: '/api/v1/auth', route: AuthRouter },
+  { path: '/api/v1/enrolled-courses', route: enrolledCourseRouter },
 ]
 
 allRoutes.forEach((item) => app.use(item.path, item.route))

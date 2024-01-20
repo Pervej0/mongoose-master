@@ -19,10 +19,10 @@ import { TAdmin } from '../admin/admin.interface'
 import AdminModel from '../admin/admin.model'
 import { JwtPayload } from 'jsonwebtoken'
 import { sendImageToCloudinary } from '../../utils/sendImageToClodudinary'
-// import { sendImageToCloudinary  } from '../../utils/sendImageToClodudinary'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
+  file: any,
   password: string,
   studentData: TStudent,
 ) => {
@@ -42,7 +42,17 @@ export const createAUserDB = async (
   if (!admissionSemester) {
     throw new Error('Admission semester data could not found!')
   }
-  userData.id = await studentUserGeneratedId(admissionSemester)
+
+  const generatedId = await studentUserGeneratedId(admissionSemester)
+  console.log(generatedId, 'xx')
+  const imageName = `${generatedId}-${studentData?.name?.firstName}`
+  // create a student
+  const { secure_url } = (await sendImageToCloudinary(
+    imageName,
+    file?.path,
+  )) as any
+
+  userData.id = generatedId
   const session = await mongoose.startSession()
   try {
     session.startTransaction()
@@ -50,11 +60,11 @@ export const createAUserDB = async (
     if (!newUser.length) {
       throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to Create user!')
     }
-    // create a student
 
     // set embeded id
     studentData.id = newUser[0].id // embedded id
     studentData.user = newUser[0]._id // reference id
+    studentData.studentProfile = secure_url
     const newStudent = await StudentModel.create([studentData], { session })
     if (!newStudent.length) {
       throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to Create Student!')

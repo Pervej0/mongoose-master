@@ -7,7 +7,6 @@ import useAsyncCatch from '../../utils/useAsyncCatch'
 
 const createAStudent: RequestHandler = useAsyncCatch(async (req, res) => {
   const data = req.body.student
-  console.log(data)
   const result = await studentServices.createAStudentDB(data)
 
   SendResponse(res, {

@@ -12,7 +12,7 @@ const findLastStudent = async () => {
       createdAt: -1, // sort document descending order
     })
     .lean()
-  return lastStudent?.id ? lastStudent.id.substring(6) : undefined
+  return lastStudent?.id ? lastStudent.id : undefined
 }
 
 export const studentUserGeneratedId = async (
@@ -37,6 +37,7 @@ export const studentUserGeneratedId = async (
   const incrementId = Number(Number(currentId) + 1)
     .toString()
     .padStart(4, '0')
+
   return `${admissionSemester.year}${admissionSemester.code}${incrementId}`
 }
 

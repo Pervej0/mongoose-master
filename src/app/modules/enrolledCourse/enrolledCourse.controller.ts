@@ -3,6 +3,7 @@ import SendResponse from '../../utils/sendResponse'
 import useAsyncCatch from '../../utils/useAsyncCatch'
 import {
   createEnrolledCourseDB,
+  getAllEnrolledCourseDB,
   updateEnrolledCourseDB,
 } from './enrolledCourse.service'
 
@@ -23,7 +24,18 @@ export const updateEnrolledCourse = useAsyncCatch(async (req, res) => {
 
   SendResponse(res, {
     statusCode: httpStatus.OK,
-    message: 'Student is enrolled succesfully',
+    message: 'Student is updated succesfully',
+    data: result,
+  })
+})
+
+export const getAllEnrolledCourse = useAsyncCatch(async (req, res) => {
+  const query = req.query
+  const result = await getAllEnrolledCourseDB(query)
+
+  SendResponse(res, {
+    statusCode: httpStatus.OK,
+    message: 'EnrolledCourse succesfully retrieved !',
     data: result,
   })
 })
