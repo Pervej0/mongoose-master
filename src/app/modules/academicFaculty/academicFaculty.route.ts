@@ -7,10 +7,13 @@ import {
 } from './academicFaculty.controller'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
 import academicFacultyZodValidationSchema from './academicFacultyValidation'
+import { auth } from '../../config/middleware/auth'
+import { USER_ROLE } from '../user/user.const'
 const router = express.Router()
 
 router.post(
   '/create-academic-faculty',
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   createDataValidation(academicFacultyZodValidationSchema),
   CreateAcademicFaculty,
 )

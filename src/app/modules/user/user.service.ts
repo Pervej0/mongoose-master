@@ -44,7 +44,6 @@ export const createAUserDB = async (
   }
 
   const generatedId = await studentUserGeneratedId(admissionSemester)
-  console.log(generatedId, 'xx')
   const imageName = `${generatedId}-${studentData?.name?.firstName}`
   // create a student
   const { secure_url } = (await sendImageToCloudinary(

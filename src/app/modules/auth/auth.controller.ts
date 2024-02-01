@@ -43,7 +43,7 @@ export const refreshToken = useAsyncCatch(async (req, res) => {
 
   SendResponse(res, {
     statusCode: httpStatus.OK,
-    message: 'Access token retrieved succesfully!',
+    message: 'Refresh token retrieved succesfully!',
     data: result,
   })
 })

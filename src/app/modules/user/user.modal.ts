@@ -12,7 +12,7 @@ const userSchema = new Schema<TUser, UserInterface>(
     password: { type: String, required: [true, 'Password is required'] },
     needsPasswordChange: { type: Boolean, default: true },
     email: { type: String, required: true, unique: true },
-    role: { type: String, enum: ['student', 'faculty', 'admin'] },
+    role: { type: String, enum: ['student', 'faculty', 'admin', 'superAdmin'] },
     status: {
       type: String,
       enum: ['active', 'blocked'],
@@ -55,6 +55,6 @@ userSchema.statics.jwtIssuedAndPasswordChangedTime = async function (
   return passwordChangedTime > jwtIssuedAt
 }
 
-const UserModel = model<TUser, UserInterface>('Practice_User', userSchema)
+const UserModel = model<TUser, UserInterface>('User', userSchema)
 
 export default UserModel

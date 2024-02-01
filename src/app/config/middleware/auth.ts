@@ -26,7 +26,6 @@ export const auth = (...userRole: TUser_role[]) => {
       const decode = (await decodeToken(token)) as JwtPayload
 
       const { userId, role, iat } = decode
-      console.log(decode, 'xxxxx')
       if (userRole && !userRole.includes(role)) {
         throw new CustomError(
           httpStatus.UNAUTHORIZED,
