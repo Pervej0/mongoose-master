@@ -120,6 +120,21 @@ export const UpdateSingleCourseDB = async (
   }
 }
 
+// Faculty related request
+export const GetSingleFacultyAndCourseDB = async (courseId: string) => {
+  const courseAndFaculty = await courseFaculitesModel.findOne({
+    course: courseId,
+  })
+  if (!courseAndFaculty) {
+    throw new CustomError(
+      httpStatus.NOT_FOUND,
+      'The course faculty is not confirm yet!',
+    )
+  }
+
+  return courseAndFaculty
+}
+
 export const AssignCourseFacultiesDB = async (
   id: string,
   payload: TCourseFaculites,

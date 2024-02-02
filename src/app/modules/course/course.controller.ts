@@ -6,6 +6,7 @@ import {
   DeleteSingleCourseDB,
   GetAllCourseDB,
   GetSingleCourseDB,
+  GetSingleFacultyAndCourseDB,
   RemoveCourseFacultiesDB,
   UpdateSingleCourseDB,
 } from './course.service'
@@ -69,7 +70,19 @@ export const UpdateSingleCourse: RequestHandler = useAsyncCatch(
   },
 )
 
-// assign course faculties request handling
+// faculties related request handling
+
+export const GetSingleFacultyAndCourse: RequestHandler = useAsyncCatch(
+  async (req, res) => {
+    const id = req.params.courseId
+    const result = await GetSingleFacultyAndCourseDB(id)
+    SendResponse(res, {
+      statusCode: httpStatus.OK,
+      message: 'Faculty with course retrieved successfully!',
+      data: result,
+    })
+  },
+)
 
 export const AssignCourseFaculties: RequestHandler = useAsyncCatch(
   async (req, res) => {

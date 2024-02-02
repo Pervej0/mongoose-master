@@ -29,7 +29,7 @@ export const auth = (...userRole: TUser_role[]) => {
       if (userRole && !userRole.includes(role)) {
         throw new CustomError(
           httpStatus.UNAUTHORIZED,
-          'You have no permission to access there fucccc!',
+          'You have no permission to access there!',
         )
       }
       const user = await UserModel.isUserExistById(userId)

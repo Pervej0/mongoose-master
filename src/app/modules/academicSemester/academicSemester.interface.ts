@@ -1,4 +1,4 @@
-export type TAcademicSemesterName = 'autumn' | 'summar' | 'fall'
+export type TAcademicSemesterName = 'autumn' | 'summer' | 'fall'
 
 export type TMonth =
   | 'January'

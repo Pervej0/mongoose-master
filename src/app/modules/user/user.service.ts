@@ -19,6 +19,7 @@ import { TAdmin } from '../admin/admin.interface'
 import AdminModel from '../admin/admin.model'
 import { JwtPayload } from 'jsonwebtoken'
 import { sendImageToCloudinary } from '../../utils/sendImageToClodudinary'
+import AcademicDepartmentModel from '../academicDepartment/academicDepartment.model'
 
 // let userId: number = 202301212
 export const createAUserDB = async (
@@ -34,23 +35,35 @@ export const createAUserDB = async (
   userData.role = 'student'
   // set user email
   userData.email = studentData.email
+
+  // academic department
+  const academicDepartment = await AcademicDepartmentModel.findById(
+    studentData.academicDepartment,
+  )
+  if (!academicDepartment) {
+    throw new Error('Academic Department data is not found!')
+  }
   // user semsester info
   const admissionSemester = await AcademicSemesterModel.findById(
     studentData.admissionSemester,
   )
   // user id
   if (!admissionSemester) {
-    throw new Error('Admission semester data could not found!')
+    throw new Error('Admission semester data is not found!')
   }
 
   const generatedId = await studentUserGeneratedId(admissionSemester)
-  const imageName = `${generatedId}-${studentData?.name?.firstName}`
-  // create a student
-  const { secure_url } = (await sendImageToCloudinary(
-    imageName,
-    file?.path,
-  )) as any
+  // if user sends profile img
+  if (file) {
+    const imageName = `${generatedId}-${studentData?.name?.firstName}`
+    const { secure_url } = (await sendImageToCloudinary(
+      imageName,
+      file?.path,
+    )) as any
+    studentData.studentProfile = secure_url
+  }
 
+  // create a student
   userData.id = generatedId
   const session = await mongoose.startSession()
   try {
@@ -63,7 +76,8 @@ export const createAUserDB = async (
     // set embeded id
     studentData.id = newUser[0].id // embedded id
     studentData.user = newUser[0]._id // reference id
-    studentData.studentProfile = secure_url
+    studentData.studentProfile = ''
+    studentData.academicFaculty = academicDepartment.academicFaculty
     const newStudent = await StudentModel.create([studentData], { session })
     if (!newStudent.length) {
       throw new CustomError(httpStatus.BAD_REQUEST, 'Failed to Create Student!')
@@ -179,10 +193,8 @@ export const changeStatusDB = async (
   id: string,
   payload: { status: string },
 ) => {
-  console.log(id, 'e')
   const result = await UserModel.findByIdAndUpdate(id, payload, {
     new: true,
   })
-  console.log(result)
   return result
 }
