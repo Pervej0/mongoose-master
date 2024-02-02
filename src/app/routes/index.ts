@@ -14,7 +14,7 @@ import enrolledCourseRouter from '../modules/enrolledCourse/enrolledCourse.route
 const app = express()
 
 const allRoutes = [
-  { path: '/api/v1/users/students', route: StudentRoutes },
+  { path: '/api/v1/students', route: StudentRoutes },
   { path: '/api/v1/users', route: userRoutes },
   { path: '/api/v1/academic-semesters', route: academicSemesterRouter },
   { path: '/api/v1/academic-faculties', route: academicFacultyRouter },

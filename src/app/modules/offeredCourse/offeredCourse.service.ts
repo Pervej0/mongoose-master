@@ -9,6 +9,7 @@ import AcademicDepartmentModel from '../academicDepartment/academicDepartment.mo
 import OffoeredCourseModel from './offeredCourse.model'
 import QueryBuilder from '../../builder/QueryBuilder'
 import { hasTimeConflict } from './utils.offeredCourse'
+import { StudentModel } from '../student/student.model'
 
 export const createOfferedCourseDB = async (payload: TOfferedCourse) => {
   const {
@@ -130,6 +131,14 @@ export const GetAllOfferedCourseDB = async (query: Record<string, unknown>) => {
   return result
 }
 
+export const GetSingleOfferdCourseDB = async (id: string) => {
+  const offeredCourse = await OffoeredCourseModel.findById(id)
+  if (!offeredCourse) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Offered Course not found')
+  }
+  return offeredCourse
+}
+
 export const UpdateSingleOfferedCourseDB = async (
   id: string,
   payload: Partial<TOfferedCourse>,
@@ -180,4 +189,48 @@ export const UpdateSingleOfferedCourseDB = async (
     new: true,
   })
   return result
+}
+
+export const DeleteOfferedCourseDB = async (id: string) => {
+  /**
+   * Step 1: check if the offered course exists
+   * Step 2: check if the semester registration status is upcoming
+   * Step 3: delete the offered course
+   */
+  const isOfferedCourseExists = await OffoeredCourseModel.findById(id)
+
+  if (!isOfferedCourseExists) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Offered Course not found')
+  }
+
+  const semesterRegistation = isOfferedCourseExists.semesterRegistration
+
+  const semesterRegistrationStatus =
+    await SemesterRegistrationModel.findById(semesterRegistation).select(
+      'status',
+    )
+
+  if (semesterRegistrationStatus?.status !== 'UPCOMING') {
+    throw new CustomError(
+      httpStatus.BAD_REQUEST,
+      `Offered course can not update ! because the semester ${semesterRegistrationStatus}`,
+    )
+  }
+
+  const result = await OffoeredCourseModel.findByIdAndDelete(id)
+  return result
+}
+
+export const MyOfferedCourseDB = async (userId: string) => {
+  const Student = await StudentModel.findOne({ id: userId })
+
+  if (!Student) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Student is not found!')
+  }
+
+  // find current ongoing semester
+  const currentOnGoingSemester = await SemesterRegistrationModel.findOne({
+    status: 'ONGOING',
+  })
+  return currentOnGoingSemester
 }

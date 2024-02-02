@@ -76,7 +76,7 @@ const studentSchema = new Schema<TStudent>({
   id: { type: String, unique: true },
   password: {
     type: String,
-    required: [false, 'Password is required'],
+    required: [true, 'Password is required'],
     max: [20, 'Password can not be more than 20 characters'],
   },
   user: {

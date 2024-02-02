@@ -1,5 +1,8 @@
 import express, { Router } from 'express'
-import { createEnrolledCourse } from './enrolledCourse.controller'
+import {
+  createEnrolledCourse,
+  getMYEnrolledCourse,
+} from './enrolledCourse.controller'
 import { createDataValidation } from '../../config/middleware/createDataValidation'
 import { EnrolledCourseValidationSchema } from './enrolledCourse.validation'
 import { auth } from '../../config/middleware/auth'
@@ -13,6 +16,8 @@ router.post(
   auth(USER_ROLE.student),
   createEnrolledCourse,
 )
+
+router.get('/my-enrolled-courses', auth(USER_ROLE.student), getMYEnrolledCourse)
 
 const enrolledCourseRouter: Router = router
 

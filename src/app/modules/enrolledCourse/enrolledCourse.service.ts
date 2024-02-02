@@ -9,6 +9,7 @@ import SemesterRegistrationModel from '../semesterRegistration/semesterRegistrat
 import { CourseModel } from '../course/course.model'
 import FacultyModel from '../faculty/faculty.model'
 import { CountGradeAndPoints } from './enrolledCourse.utils'
+import QueryBuilder from '../../builder/QueryBuilder'
 
 export const createEnrolledCourseDB = async (
   userId: string,
@@ -40,7 +41,6 @@ export const createEnrolledCourseDB = async (
   }
 
   // total enrolled credits + new enroll credit > maxCredits (maxCredit is fixed for per semester)
-
   const maxCreditsForSemester = await SemesterRegistrationModel.findById(
     { _id: OfferedCourseExist.semesterRegistration },
     { maxCredit: 1 },
@@ -207,6 +207,40 @@ export const updateEnrolledCourseDB = async (
   return result
 }
 
-export const getAllEnrolledCourseDB = (query: Record<string, unknown>) => {
-  console.log(query)
+export const getMYEnrolledCourseDB = async (
+  studentId: string,
+  query: Record<string, unknown>,
+) => {
+  const student = await StudentModel.findOne({ id: studentId })
+
+  if (!student) {
+    throw new CustomError(httpStatus.NOT_FOUND, 'Student not found !')
+  }
+
+  const enrolledCourseQuery = new QueryBuilder(
+    EnrolledCourseModel.find({
+      student: student._id,
+    }).populate(
+      'semesterRegistration academicSemester academicFaculty academicDepartment offeredCourse course student faculty',
+    ),
+    query,
+  )
+    .filter()
+    .sort()
+    .paginate()
+    .fields()
+
+  const result = await enrolledCourseQuery.modelQuery
+  if (!result.length) {
+    throw new CustomError(
+      httpStatus.NOT_FOUND,
+      'Student did not join any course yet!',
+    )
+  }
+  const meta = await enrolledCourseQuery.countTotal()
+
+  return {
+    meta,
+    result,
+  }
 }

@@ -59,7 +59,6 @@ const localGuardianSchema = Joi.object({
 })
 
 const studentZodValidationSchema = Joi.object({
-  id: Joi.string().required(),
   name: studentNameSchema.required().messages({
     'any.required': 'Name is required to submit',
   }),
