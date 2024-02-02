@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status'
 import QueryBuilder from '../../builder/QueryBuilder'
 import CustomError from '../../error/customError'
@@ -5,6 +6,8 @@ import { AcademicSemesterModel } from '../academicSemester/academicSemester.mode
 import { semesterRegistrationStatus } from './semesterRegistration.const'
 import { TSemesterRegistration } from './semesterRegistration.interface'
 import SemesterRegistrationModel from './semesterRegistration.model'
+import mongoose from 'mongoose'
+import OffoeredCourseModel from '../offeredCourse/offeredCourse.model'
 
 export const createSemesterRagistrationDB = async (
   payload: TSemesterRegistration,
@@ -70,7 +73,6 @@ export const UpdateSingleSemesterRagistrationDB = async (
 ) => {
   const requestedStatus = payload.status
   const registratedSemester = await SemesterRegistrationModel.findById(id)
-  console.log(registratedSemester)
   // check the Registered semester found or not
   if (!registratedSemester) {
     throw new Error('The semester dose not exist!')
@@ -101,4 +103,57 @@ export const UpdateSingleSemesterRagistrationDB = async (
   )
 
   return result
+}
+
+export const deleteSemesterRegistrationDB = async (id: string) => {
+  const isSemesterRegistrationExist =
+    await SemesterRegistrationModel.findById(id)
+  if (!isSemesterRegistrationExist) {
+    throw new CustomError(
+      httpStatus.NOT_FOUND,
+      'Semester Registration is not found',
+    )
+  }
+  const status = isSemesterRegistrationExist.status
+  if (status !== 'UPCOMING') {
+    throw new CustomError(
+      httpStatus.BAD_REQUEST,
+      `You can not update as the registered semester is ${semesterRegistrationStatus}`,
+    )
+  }
+
+  const session = await mongoose.startSession()
+
+  // deleting registered semister
+  try {
+    session.startTransaction()
+    // delete all offered course for that registerd semister
+    const deleteOfferedCourse = await OffoeredCourseModel.deleteMany(
+      { semesterRegistration: id },
+      { session },
+    )
+    if (!deleteOfferedCourse) {
+      throw new CustomError(
+        httpStatus.BAD_REQUEST,
+        'Failed to delete offered course !',
+      )
+    }
+
+    const deletedSemisterRegistration =
+      await SemesterRegistrationModel.findByIdAndDelete(id, {
+        session,
+        new: true,
+      })
+
+    if (!deletedSemisterRegistration) {
+      throw new CustomError(
+        httpStatus.BAD_REQUEST,
+        'Failed to delete semester registration !',
+      )
+    }
+  } catch (err: any) {
+    await session.abortTransaction()
+    await session.endSession()
+    throw new CustomError(httpStatus.BAD_REQUEST, err)
+  }
 }

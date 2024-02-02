@@ -5,6 +5,7 @@ import {
   GetSingleSemesterRegistrationDB,
   UpdateSingleSemesterRagistrationDB,
   createSemesterRagistrationDB,
+  deleteSemesterRegistrationDB,
 } from './semesterRegistration.service'
 import SendResponse from '../../utils/sendResponse'
 
@@ -43,6 +44,16 @@ export const GetSingleSemesterRagistration: RequestHandler = useAsyncCatch(
     })
   },
 )
+
+export const deleteSemesterRegistration = useAsyncCatch(async (req, res) => {
+  const id = req.params.registrationId
+  const result = await deleteSemesterRegistrationDB(id)
+  SendResponse(res, {
+    statusCode: 200,
+    message: 'Registered Semester deleted successfully!',
+    data: result,
+  })
+})
 
 export const UpdateSingleSemesterRagistration: RequestHandler = useAsyncCatch(
   async (req, res) => {

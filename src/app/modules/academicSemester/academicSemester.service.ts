@@ -8,7 +8,6 @@ export const CreateAcademicSemesterDB = async (data: TAcademicSemester) => {
   if (AcademicSemesterNameCode[data.name] !== data.code) {
     throw new Error('The Semester Code is not valid!')
   }
-
   const query = await AcademicSemesterModel.create(data)
   return query
 }
