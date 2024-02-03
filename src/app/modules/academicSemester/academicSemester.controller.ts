@@ -22,11 +22,12 @@ export const CreateAcademicSemester: RequestHandler = useAsyncCatch(
 
 export const GetAllAcademicSemester: RequestHandler = useAsyncCatch(
   async (req, res) => {
-    const result = await GetAllAcademicSemesterDB()
+    const result = await GetAllAcademicSemesterDB(req.query)
     SendResponse(res, {
       statusCode: 200,
       message: 'Academic semesters retrieved successfully!',
-      data: result,
+      meta: result.meta,
+      data: result.result,
     })
   },
 )

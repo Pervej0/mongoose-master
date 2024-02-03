@@ -15,7 +15,8 @@ export const GetAllAdmin: RequestHandler = useAsyncCatch(async (req, res) => {
   SendResponse(res, {
     statusCode: 200,
     message: 'Admin data retrieved successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   })
 })
 

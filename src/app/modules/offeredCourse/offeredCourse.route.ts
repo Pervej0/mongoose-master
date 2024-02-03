@@ -27,6 +27,9 @@ router.get(
   auth(USER_ROLE.admin, USER_ROLE.superAdmin, USER_ROLE.faculty),
   GetAllOfferedCourse,
 )
+
+router.get('/my-offered-course', auth(USER_ROLE.student), MyOfferedCourse)
+
 router.get(
   '/:courseId',
   auth(
@@ -49,8 +52,6 @@ router.delete(
   auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   DeleteOfferedCourse,
 )
-
-router.get('/my-offered-course', auth(USER_ROLE.admin), MyOfferedCourse)
 
 const offeredCourseRouter: Router = router
 export default offeredCourseRouter

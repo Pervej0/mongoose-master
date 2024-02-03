@@ -22,11 +22,12 @@ export const CreateAcademicDepartment: RequestHandler = useAsyncCatch(
 
 export const GetAllAcademicDepartment: RequestHandler = useAsyncCatch(
   async (req, res) => {
-    const result = await GetAllAcademicDepartmentDB()
+    const result = await GetAllAcademicDepartmentDB(req.query)
     SendResponse(res, {
       statusCode: 200,
       message: 'Academic Department retrieved successfully!',
-      data: result,
+      meta: result.meta,
+      data: result.result,
     })
   },
 )

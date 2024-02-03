@@ -22,11 +22,12 @@ export const CreateAcademicFaculty: RequestHandler = useAsyncCatch(
 
 export const GetAllAcademicFaculty: RequestHandler = useAsyncCatch(
   async (req, res) => {
-    const result = await GetAllAcademicFacultyDB()
+    const result = await GetAllAcademicFacultyDB(req.query)
     SendResponse(res, {
       statusCode: 200,
       message: 'All Academic Faculty retrieved successfully!',
-      data: result,
+      meta: result.meta,
+      data: result.result,
     })
   },
 )

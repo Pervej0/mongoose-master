@@ -221,10 +221,13 @@ export const DeleteOfferedCourseDB = async (id: string) => {
   return result
 }
 
-export const MyOfferedCourseDB = async (userId: string) => {
-  const Student = await StudentModel.findOne({ id: userId })
+export const MyOfferedCourseDB = async (
+  userId: string,
+  query: Record<string, unknown>,
+) => {
+  const student = await StudentModel.findOne({ id: userId })
 
-  if (!Student) {
+  if (!student) {
     throw new CustomError(httpStatus.NOT_FOUND, 'Student is not found!')
   }
 
@@ -232,5 +235,154 @@ export const MyOfferedCourseDB = async (userId: string) => {
   const currentOnGoingSemester = await SemesterRegistrationModel.findOne({
     status: 'ONGOING',
   })
-  return currentOnGoingSemester
+
+  const aggregationQuery = [
+    // offerdCourse data for specific
+    // registered Ongoing Semester and for sepecific student
+    {
+      $match: {
+        semesterRegistration: currentOnGoingSemester?._id,
+        academicFaculty: student?.academicFaculty,
+        academicDepartment: student?.academicDepartment,
+      },
+    },
+    {
+      $lookup: {
+        from: 'courses',
+        localField: 'course',
+        foreignField: '_id',
+        as: 'course',
+      },
+    },
+    {
+      $unwind: '$course',
+    },
+    // my enrolled course and offered course
+    {
+      $lookup: {
+        from: 'enrolledcourses',
+        let: {
+          currentOnGoingSemester: currentOnGoingSemester?._id,
+          currentStudent: student?._id,
+        },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  {
+                    $eq: ['$semesterRegistration', '$$currentOnGoingSemester'],
+                  },
+                  {
+                    $eq: ['$student', '$$currentStudent'],
+                  },
+                  {
+                    $eq: ['$isEnrolled', true],
+                  },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'enrolledcourses',
+      },
+    },
+    // comparison  between my enrolled course and offered course
+    {
+      $addFields: {
+        isAlreadyEnrolled: {
+          $in: [
+            '$course._id',
+            {
+              $map: {
+                input: '$enrolledcourses',
+                as: 'enroll',
+                in: '$$enroll.course',
+              },
+            },
+          ],
+        },
+      },
+    },
+    // completed enrolled courses and available offered courses
+    {
+      $lookup: {
+        from: 'enrolledcourses',
+        let: { currentStudent: student._id },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ['$$currentStudent', '$student'] },
+                  { $eq: ['$isCompleted', true] },
+                ],
+              },
+            },
+          },
+        ],
+        as: 'completedCourse',
+      },
+    },
+    // comparison between completed course and  logical offered course and add those
+    {
+      $addFields: {
+        completedCourseIds: {
+          $map: {
+            input: '$completedCourse',
+            as: 'completed',
+            in: '$$completed.course',
+          },
+        },
+      },
+    },
+
+    // check is course has any prerequiste if yes the show those course prerequiste
+    // if no show successfully courseIsfullfilled true.
+    {
+      $addFields: {
+        isPrerequisiteCourseFullfilled: {
+          $or: [
+            { $eq: ['$course.preRequisiteCourses', []] },
+            {
+              $setIsSubset: [
+                '$course.preRequisiteCourses.course',
+                '$completedCourseIds',
+              ],
+            },
+          ],
+        },
+      },
+    },
+
+    // send only those offered course which is not alreadyEnrolled
+    {
+      $match: {
+        isAlreadyEnrolled: false,
+        isPrerequisiteCourseFullfilled: true,
+      },
+    },
+  ]
+
+  const page = Number(query.page) || 1
+  const limit = Number(query.limit) || 10
+  const skip = (page - 1) * limit
+  const total = (await OffoeredCourseModel.aggregate(aggregationQuery)).length
+
+  const totalPage = Math.ceil(total / limit)
+
+  // pagination query
+  const paginationQuery = [
+    {
+      $skip: skip,
+    },
+    { $limit: limit },
+  ]
+
+  const offeredCourse = await OffoeredCourseModel.aggregate([
+    ...aggregationQuery,
+    ...paginationQuery,
+  ])
+
+  return { meta: { page, limit, total, totalPage }, result: offeredCourse }
 }

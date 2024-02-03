@@ -29,7 +29,8 @@ export const GetAllCourse: RequestHandler = useAsyncCatch(async (req, res) => {
   SendResponse(res, {
     statusCode: httpStatus.OK,
     message: 'All Courses retrieved successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   })
 })
 

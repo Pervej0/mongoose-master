@@ -58,10 +58,11 @@ export const DeleteOfferedCourse = useAsyncCatch(async (req, res) => {
 })
 export const MyOfferedCourse = useAsyncCatch(async (req, res) => {
   const userId = req.user.userId
-  const result = await MyOfferedCourseDB(userId)
+  const result = await MyOfferedCourseDB(userId, req.query)
   SendResponse(res, {
     statusCode: httpStatus.CREATED,
     message: 'My Offered course retrieved successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   })
 })

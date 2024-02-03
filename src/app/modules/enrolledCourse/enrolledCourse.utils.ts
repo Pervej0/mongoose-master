@@ -5,9 +5,7 @@ export const CountGradeAndPoints = (courseMarks: Record<string, number>) => {
     classTest2 = 0,
     finalTerm = 0,
   } = courseMarks
-  const totalMarks = Math.ceil(
-    classTest1 * 0.1 + midTerm * 0.3 + classTest2 * 0.1 + finalTerm * 0.5,
-  )
+  const totalMarks = Math.ceil(classTest1 + midTerm + classTest2 + finalTerm)
 
   /**
    * 0-19 F
@@ -21,7 +19,7 @@ export const CountGradeAndPoints = (courseMarks: Record<string, number>) => {
     gradePoints: 0,
   }
   //   console.log(totalMarks)
-
+  console.log(totalMarks)
   if (totalMarks > 0 && totalMarks <= 30) {
     result = {
       grade: 'F',

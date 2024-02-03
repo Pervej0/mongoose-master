@@ -7,9 +7,13 @@ export const GetAllAdminDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(AdminModel.find(), query)
     .search(FacultySearchableFields)
     .filter()
+    .sort()
+    .paginate()
+    .fields()
 
   const result = await adminQuery.modelQuery
-  return result
+  const meta = await adminQuery.countTotal()
+  return { meta, result }
 }
 
 export const GetSingleAdminDB = async (id: string) => {

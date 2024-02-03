@@ -1,3 +1,4 @@
+export const AcademicSemesterSearchFileds = ['name', 'year']
 export const AcademicSemesterName = ['autumn', 'summer', 'fall']
 export const Month = [
   'January',

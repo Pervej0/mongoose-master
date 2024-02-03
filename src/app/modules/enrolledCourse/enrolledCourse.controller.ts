@@ -24,7 +24,7 @@ export const updateEnrolledCourse = useAsyncCatch(async (req, res) => {
 
   SendResponse(res, {
     statusCode: httpStatus.OK,
-    message: 'Student is updated succesfully',
+    message: 'Student Course mark is updated succesfully',
     data: result,
   })
 })
@@ -37,6 +37,7 @@ export const getMYEnrolledCourse = useAsyncCatch(async (req, res) => {
   SendResponse(res, {
     statusCode: httpStatus.OK,
     message: 'EnrolledCourse succesfully retrieved !',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   })
 })
