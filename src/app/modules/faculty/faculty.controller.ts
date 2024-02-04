@@ -14,7 +14,8 @@ export const GetAllFaculty: RequestHandler = useAsyncCatch(async (req, res) => {
   SendResponse(res, {
     statusCode: 200,
     message: 'Faculty data retrieved successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   })
 })
 

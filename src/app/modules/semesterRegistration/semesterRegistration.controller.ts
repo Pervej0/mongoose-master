@@ -27,7 +27,8 @@ export const GetAllSemesterRegistraion: RequestHandler = useAsyncCatch(
     SendResponse(res, {
       statusCode: 200,
       message: 'All Semeseter Registration retrieved successfully!',
-      data: result,
+      meta: result.meta,
+      data: result.result,
     })
   },
 )

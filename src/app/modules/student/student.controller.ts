@@ -22,7 +22,8 @@ const getAllStudent: RequestHandler = useAsyncCatch(async (req, res) => {
   SendResponse(res, {
     statusCode: 200,
     message: 'All students data retrieved successfully!',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   })
 })
 
