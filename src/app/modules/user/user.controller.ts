@@ -24,7 +24,7 @@ export const createAUser: RequestHandler = useAsyncCatch(async (req, res) => {
 export const CreateFaculty: RequestHandler = useAsyncCatch(async (req, res) => {
   const { password, faculty: facultyData } = req.body
 
-  const result = await CreateFacultyDB(password, facultyData)
+  const result = await CreateFacultyDB(req.file, password, facultyData)
   SendResponse(res, {
     statusCode: 200,
     message: 'Faculty Created Successfully!',

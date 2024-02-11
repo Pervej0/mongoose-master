@@ -95,6 +95,7 @@ export const createAUserDB = async (
 }
 
 export const CreateFacultyDB = async (
+  file: any,
   password: string,
   facultyData: TFaculty,
 ) => {
@@ -105,6 +106,18 @@ export const CreateFacultyDB = async (
   userData.email = facultyData.email
   const generateId = await generateFacultyId()
   userData.id = generateId
+  // profile image optional
+  if (file) {
+    const imageName = `${generateId}-${facultyData?.name?.firstName}`
+    const { secure_url } = (await sendImageToCloudinary(
+      imageName,
+      file?.path,
+    )) as any
+    facultyData.profileImg = secure_url
+  } else {
+    facultyData.profileImg = ''
+  }
+
   const session = await mongoose.startSession()
   try {
     session.startTransaction()
@@ -141,12 +154,17 @@ export const CreateAdminDB = async (
   userData.role = 'admin'
   // set user email
   userData.email = payload.email
-  const imageName = `${generateId}-${payload?.name?.firstName}`
-
-  const { secure_url } = (await sendImageToCloudinary(
-    imageName,
-    file?.path,
-  )) as any
+  // profile image optional
+  if (file) {
+    const imageName = `${generateId}-${payload?.name?.firstName}`
+    const { secure_url } = (await sendImageToCloudinary(
+      imageName,
+      file?.path,
+    )) as any
+    payload.profileImg = secure_url
+  } else {
+    payload.profileImg = ''
+  }
 
   const session = await mongoose.startSession()
   try {
@@ -160,7 +178,7 @@ export const CreateAdminDB = async (
     }
     payload.user = newAdminUser[0]._id
     payload.id = newAdminUser[0].id
-    payload.profileImg = secure_url
+
     const newAdmin = await AdminModel.create([payload], [session])
     await session.commitTransaction()
     await session.endSession()

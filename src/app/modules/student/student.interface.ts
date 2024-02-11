@@ -21,7 +21,7 @@ export type TStudent = {
   name: studentName
   studentProfile?: string
   gender: 'male' | 'female' | 'others'
-  dob: string
+  dateOfBirth: string
   email: string
   contactNo: string
   emergencyContact: string

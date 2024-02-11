@@ -10,12 +10,12 @@ import { USER_ROLE } from '../user/user.const'
 
 const router = express.Router()
 
-// router.post(
-//   '/create-student',
-//   auth(USER_ROLE.student),
-//   createDataValidation(studentZodValidationSchema),
-//   studentControllers.createAStudent,
-// )
+router.post(
+  '/create-student',
+  auth(USER_ROLE.student),
+  createDataValidation(studentZodValidationSchema),
+  studentControllers.createAStudent,
+)
 router.get('/:studentId', studentControllers.getSingleStudent)
 router.get('/', studentControllers.getAllStudent)
 router.delete('/:studentId', studentControllers.updateIsDeletedField)

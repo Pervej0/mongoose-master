@@ -92,7 +92,10 @@ const studentSchema = new Schema<TStudent>(
       },
       required: true,
     },
-    dob: { type: String, required: [true, 'Date of Birth is required'] },
+    dateOfBirth: {
+      type: String,
+      required: [true, 'Date of Birth is required'],
+    },
     email: {
       type: String,
       required: [true, 'Email is required'],
@@ -129,14 +132,17 @@ const studentSchema = new Schema<TStudent>(
     admissionSemester: {
       type: Schema.Types.ObjectId,
       ref: 'Academic-semester',
+      required: [true, 'Academic Semester is required'],
     },
     academicDepartment: {
       type: Schema.Types.ObjectId,
       ref: 'Academic-department',
+      required: [true, 'Academic Department is required'],
     },
     academicFaculty: {
       type: Schema.Types.ObjectId,
       ref: 'Academic-faculty',
+      required: [true, 'Academic Faculty is required'],
     },
     isDeleted: {
       type: Boolean,
