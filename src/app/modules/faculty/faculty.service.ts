@@ -22,8 +22,7 @@ export const GetAllFacultyDB = async (query: Record<string, unknown>) => {
 }
 
 export const GetSingleFacultyDB = async (id: string) => {
-  const filter = { _id: id }
-  const result = await FacultyModel.findOne(filter)
+  const result = await FacultyModel.findById(id).populate('academicDepartment')
   return result
 }
 

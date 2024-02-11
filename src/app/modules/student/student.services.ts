@@ -86,16 +86,13 @@ const getAllStudentDB = async (query: Record<string, unknown>) => {
   }
 }
 const getSingleStudentDB = async (studentId: string) => {
-  const filter = { id: studentId }
-  // const result = await StudentModel.findOne(filter).exec()
-  const result = await StudentModel.findOne(filter)
+  const result = await StudentModel.findById(studentId)
     .populate('admissionSemester')
     .populate({
-      path: 'academicDepartment',
-      populate: {
-        path: 'academicFaculty',
-      },
+      path: 'academicDepartment academicFaculty',
     })
+    .exec()
+
   return result
 }
 

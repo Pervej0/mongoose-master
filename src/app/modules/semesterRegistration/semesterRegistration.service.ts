@@ -49,7 +49,7 @@ export const GetAllSemesterRegistrationDB = async (
   query: Record<string, unknown>,
 ) => {
   const semesterRegistrationQuery = new QueryBuilder(
-    SemesterRegistrationModel.find().populate({ path: 'academicSemester' }),
+    SemesterRegistrationModel.find().populate('academicSemester'),
     query,
   )
     .filter()
