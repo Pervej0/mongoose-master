@@ -62,7 +62,6 @@ const studentZodValidationSchema = Joi.object({
   name: studentNameSchema.required().messages({
     'any.required': 'Name is required to submit',
   }),
-  studentProfile: Joi.string(),
   gender: Joi.string().valid('male', 'female', 'others').required(),
   dob: Joi.string().required().messages({
     'string.empty': 'Date of Birth is required',

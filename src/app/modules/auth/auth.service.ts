@@ -13,11 +13,11 @@ export const logInUserDB = async (payload: TLoginUser) => {
   // chceck if user exist
   const user = (await UserModel.isUserExistById(payload.id)) as TUser
   if (!user) {
-    throw new Error('This user is not found !')
+    throw new CustomError(httpStatus.NOT_FOUND, 'This user is not found!')
   }
   // checking if the user is already deleted
   if (user.isDeleted) {
-    throw new CustomError(httpStatus.FORBIDDEN, 'This user is deleted !')
+    throw new CustomError(httpStatus.FORBIDDEN, 'This user is deleted!')
   }
   // checking if the user is blocked
   if (user?.status === 'blocked') {

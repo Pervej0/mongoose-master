@@ -36,6 +36,11 @@ userSchema.pre('save', async function (next) {
   next()
 })
 
+userSchema.post('save', function (doc, next) {
+  doc.password = ''
+  next()
+})
+
 // static method
 userSchema.statics.isUserExistById = async function (id) {
   return await UserModel.findOne({ id })

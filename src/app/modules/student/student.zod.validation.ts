@@ -37,7 +37,7 @@ export const studentZodValidationSchema = z.object({
     password: z.string().max(20),
     student: z.object({
       name: studentNameSchema,
-      studentProfile: z.string().optional(),
+      // studentProfile: z.string().optional(),
       gender: z.enum(['male', 'female', 'others']),
       dob: z.string(),
       email: z.string().email(),

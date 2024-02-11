@@ -72,78 +72,83 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 })
 
-const studentSchema = new Schema<TStudent>({
-  id: { type: String, unique: true },
-  password: {
-    type: String,
-    required: [true, 'Password is required'],
-    max: [20, 'Password can not be more than 20 characters'],
-  },
-  user: {
-    type: Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  name: {
-    type: studentNameSchema,
-    required: [true, 'Name is required to submit'],
-  },
-  studentProfile: { type: String },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'others'],
-      message: `{VALUE} is not in correct format`,
+const studentSchema = new Schema<TStudent>(
+  {
+    id: { type: String, unique: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
-    required: true,
-  },
-  dob: { type: String, required: [true, 'Date of Birth is required'] },
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    validate: {
-      validator: (value: string) => validator.isEmail(value),
-      message: '{VALUE} is not a valid email',
+    name: {
+      type: studentNameSchema,
+      required: [true, 'Name is required to submit'],
+    },
+    studentProfile: { type: String },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'others'],
+        message: `{VALUE} is not in correct format`,
+      },
+      required: true,
+    },
+    dob: { type: String, required: [true, 'Date of Birth is required'] },
+    email: {
+      type: String,
+      required: [true, 'Email is required'],
+      validate: {
+        validator: (value: string) => validator.isEmail(value),
+        message: '{VALUE} is not a valid email',
+      },
+    },
+    contactNo: { type: String, required: [true, 'Contact Number is required'] },
+    emergencyContact: {
+      type: String,
+      required: [true, 'Emergency contact number is required'],
+    },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    },
+    presentAdd: {
+      type: String,
+      required: [true, 'Present Address is required'],
+    },
+    permanentAdd: {
+      type: String,
+      required: [true, 'Permanent Address is required'],
+    },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian Details is required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local Guardian details is required'],
+    },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academic-semester',
+    },
+    academicDepartment: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academic-department',
+    },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      ref: 'Academic-faculty',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
-  contactNo: { type: String, required: [true, 'Contact Number is required'] },
-  emergencyContact: {
-    type: String,
-    required: [true, 'Emergency contact number is required'],
+  {
+    toJSON: {
+      virtuals: true,
+    },
   },
-  bloodGroup: {
-    type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
-  },
-  presentAdd: { type: String, required: [true, 'Present Address is required'] },
-  permanentAdd: {
-    type: String,
-    required: [true, 'Permanent Address is required'],
-  },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian Details is required'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local Guardian details is required'],
-  },
-  admissionSemester: {
-    type: Schema.Types.ObjectId,
-    ref: 'Academic-semester',
-  },
-  academicDepartment: {
-    type: Schema.Types.ObjectId,
-    ref: 'Academic-department',
-  },
-  academicFaculty: {
-    type: Schema.Types.ObjectId,
-    ref: 'Academic-faculty',
-  },
-  isDeleted: {
-    type: Boolean,
-    default: false,
-  },
-})
+)
 
 // mongoose save hook/middleware
 // studentSchema.pre('save', async function (next) {
@@ -163,9 +168,9 @@ const studentSchema = new Schema<TStudent>({
 //   next()
 // })
 
-studentSchema.post('save', function (doc, next) {
-  doc.password = ''
-  next()
+//virtual
+studentSchema.virtual('fullName').get(function () {
+  return this?.name?.firstName + this?.name?.middleName + this?.name?.lastName
 })
 
 // mongoose query hook/middleware

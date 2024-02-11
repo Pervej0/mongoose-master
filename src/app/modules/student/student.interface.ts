@@ -17,7 +17,6 @@ export type studentName = {
 
 export type TStudent = {
   id: string
-  password: string
   user?: Types.ObjectId
   name: studentName
   studentProfile?: string

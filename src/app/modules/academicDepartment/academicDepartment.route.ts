@@ -14,7 +14,7 @@ const router = express.Router()
 
 router.post(
   '/create-academic-department',
-  auth(USER_ROLE.superAdmin, USER_ROLE.superAdmin),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   createDataValidation(academicDepartmentZodValidation),
   CreateAcademicDepartment,
 )

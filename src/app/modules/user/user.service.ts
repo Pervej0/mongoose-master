@@ -61,6 +61,8 @@ export const createAUserDB = async (
       file?.path,
     )) as any
     studentData.studentProfile = secure_url
+  } else {
+    studentData.studentProfile = ''
   }
 
   // create a student
@@ -76,7 +78,7 @@ export const createAUserDB = async (
     // set embeded id
     studentData.id = newUser[0].id // embedded id
     studentData.user = newUser[0]._id // reference id
-    studentData.studentProfile = ''
+
     studentData.academicFaculty = academicDepartment.academicFaculty
     const newStudent = await StudentModel.create([studentData], { session })
     if (!newStudent.length) {
